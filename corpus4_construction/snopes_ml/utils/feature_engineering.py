@@ -12,10 +12,13 @@ from sklearn.metrics.pairwise import cosine_distances
 from tqdm import tqdm
 import pandas as pd
 from time import time
+import nltk
+nltk.download('stopwords')
 from nltk.corpus import stopwords
 import string
 import pickle
-from sklearn.externals import joblib
+# from sklearn.externals import joblib
+import joblib
 
 from snopes_ml.utils.data_helpers import text_normalization, text2sent
 # from snopes_ml.utils.doc2vec import avg_embedding_similarity
