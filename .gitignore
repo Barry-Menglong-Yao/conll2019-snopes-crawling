@@ -13,3 +13,5 @@ crawler/.classpath
 crawler/.project
 crawler/.settings/org.eclipse.jdt.apt.core.prefs
 crawler/.settings/org.eclipse.jdt.core.prefs
+Results/Corpus2_annotated.csv
+*.json

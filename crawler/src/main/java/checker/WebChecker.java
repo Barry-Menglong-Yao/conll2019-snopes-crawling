@@ -28,6 +28,7 @@ public class WebChecker extends AbstractChecker{
         OriginDocExtractorOnWeb originDocumentExtractor = new OriginDocExtractorOnWeb(link);
         try{
             String text = originDocumentExtractor.getDoc();
+
             if (text!=null && text.length()>0){
                 String[] newLine = {snopesUrl,link," ",text};
                 synchronized (this){

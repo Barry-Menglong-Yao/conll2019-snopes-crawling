@@ -32,14 +32,15 @@ public class App{
 
     public static void main(String[] args) throws Exception{
         App app = new App();
-        app.start(args);
+         
+        app.start(args );
 
     }
 
-    public void start(String[] args) throws Exception{
+    public void start(String[] args ) throws Exception{
 
         long startTime = System.nanoTime();
-
+         
 
         if (args.length>0 && args[0].equals("mode3")){
             urlCorpusConstruct();
@@ -274,7 +275,7 @@ public class App{
      *         NotFoundLinks stores links not crawled by webarchive
      * @throws Exception
      */
-    private void localLinksCheckInArchive() throws Exception{
+    public void localLinksCheckInArchive() throws Exception{
         ArrayList<String[]> lines = new ArrayList<String[]>();
         CSVReader reader = new CSVReader(new FileReader(Constants.RESULT_STORAGE_DIRECTORY + Constants.ORIGIN_LINK_CORPUS));
 
@@ -302,7 +303,7 @@ public class App{
         File logFile = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
         if (logFile.exists()){
             ArrayList<String> crawledLines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
-            lines = removeCrawledLines(lines,crawledLines);
+            //TODO lines = removeCrawledLines(lines,crawledLines);
         }
 
         System.out.println(lines.size());
@@ -349,7 +350,7 @@ public class App{
      * Crawl Links that cannot find on the web archive with its original url
      * @throws Exception
      */
-    private void localLinksExtractorInWeb() throws Exception{
+    public void localLinksExtractorInWeb() throws Exception{
         ArrayList<String> lines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_IN_AV);
         List<String[]> restPairs = new ArrayList<String[]>();
 

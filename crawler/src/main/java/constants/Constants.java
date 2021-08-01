@@ -4,10 +4,11 @@ package constants;
      * This class contains all the constants used in the program.
      */
 public class Constants {
-
-        public static String RESULT_STORAGE_DIRECTORY="Results/"; // Directory path to store all the results
-        public static String INITIAL_DATA = "Data/"; //Directory to store the Annotations and provided Corpus1
-        public static String DOWNLOAD_STORAGE_DIRECTORY="DownloadFiles/";
+        public static String RUNNING_DIR="src/test/resources/";
+        // public static String RUNNING_DIR="";
+        public static String RESULT_STORAGE_DIRECTORY=RUNNING_DIR+"Results/"; // Directory path to store all the results
+        public static String INITIAL_DATA = RUNNING_DIR+"Data/"; //Directory to store the Annotations and provided Corpus1
+        public static String DOWNLOAD_STORAGE_DIRECTORY=RUNNING_DIR+"DownloadFiles/";
 
         public static final String CSV_SEPARATOR = ","; // Separator used in csv files
         public static final String CSV_QUOTE = "\""; // Quote used to update the data to csv files
