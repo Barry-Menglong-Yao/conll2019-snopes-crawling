@@ -1,5 +1,6 @@
 crawler/out/
 crawler/Results/
+crawler/Results_mode1/**
 crawler/Results1/
 crawler/nohup.out
 crawler/target/
@@ -15,3 +16,6 @@ crawler/.settings/org.eclipse.jdt.apt.core.prefs
 crawler/.settings/org.eclipse.jdt.core.prefs
 Results/Corpus2_annotated.csv
 *.json
+src/test/resources/**
+crawler/.factorypath
+crawler/log/**

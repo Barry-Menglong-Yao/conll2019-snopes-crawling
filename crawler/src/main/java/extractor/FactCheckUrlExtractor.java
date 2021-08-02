@@ -80,5 +80,18 @@ public class FactCheckUrlExtractor extends WebCrawler {
             myFileWriter.closeWriteConnection();
         }
     }
-}
 
+    
+
+
+    public static void main(String[] args) {
+        MyFileWriter myFileWriter = new MyFileWriter();
+        myFileWriter.openWriteConnection(Constants.SNOPES_URLS_CORPUS);
+        for (int i = 0; i < 3; i++) {
+    //                if (factCheckUrls.get(i).select("a").attr("href").contains(Constants.SNOPES_FACT_CHECK))
+                myFileWriter.writeLine( i+"");
+
+        }
+        myFileWriter.closeWriteConnection();
+    }
+}

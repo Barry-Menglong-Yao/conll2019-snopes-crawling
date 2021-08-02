@@ -4,8 +4,8 @@ package constants;
      * This class contains all the constants used in the program.
      */
 public class Constants {
-        public static String RUNNING_DIR="src/test/resources/";
-        // public static String RUNNING_DIR="";
+        // public static String RUNNING_DIR="src/test/resources/";
+        public static String RUNNING_DIR="";
         public static String RESULT_STORAGE_DIRECTORY=RUNNING_DIR+"Results/"; // Directory path to store all the results
         public static String INITIAL_DATA = RUNNING_DIR+"Data/"; //Directory to store the Annotations and provided Corpus1
         public static String DOWNLOAD_STORAGE_DIRECTORY=RUNNING_DIR+"DownloadFiles/";
@@ -22,7 +22,7 @@ public class Constants {
         public static final String ANNOTATED_CLAIM_EVIDENCE_HEADERS= "Snopes URL,Commoncrawl URL,Offset,Length,Category,SubCategory,Headline,Description,Source,Claim,Truthfulness,Evidence,Origin,Snippets,Stance,Evidence_Sentences";
 
         public static final String AMAZON_FILE_SERVER = "https://commoncrawl.s3.amazonaws.com/";
-        public static final String SNOPES_FACT_CHECK_PATTERN = ".+(fact-check/page)/.*";
+        public static final String SNOPES_FACT_CHECK_PATTERN = ".+(fact-check)/.*";///page
         public static final String SNOPES_CATEGORY_PATTERN = ".+(fact-check/category)/.*";
         public static final String SNOPES_FACTCHECK_WEBSITE = "https://www.snopes.com/fact-check/"; // Snopes website
         public static final String SNOPES_WEBSITE="https://www.snopes.com/";

@@ -27,9 +27,11 @@ import java.util.regex.Matcher;
 
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.ling.HasWord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class App{
-
+    private Logger logger = LoggerFactory.getLogger(getClass());
     public static void main(String[] args) throws Exception{
         App app = new App();
          
@@ -43,6 +45,7 @@ public class App{
          
 
         if (args.length>0 && args[0].equals("mode3")){
+            
             urlCorpusConstruct();
             claimEvideceExtractorOnSnopes(Constants.UNIQUE_URLS_CORPUS);
         }else{
@@ -86,6 +89,7 @@ public class App{
      * Crawler4j crawl latest fact-checking urls on the Snopes, filter out repeated urls.
      */
     private void urlCorpusConstruct(){
+        logger.info("urlCorpusConstruct start");
         CrawlController factCheckUrlController = factCheckUrlCrawlConfig();
         if(factCheckUrlController!=null){
             factCheckUrlController.addSeed(Constants.SNOPES_FACTCHECK_WEBSITE);
@@ -110,7 +114,7 @@ public class App{
             myFileWriter.closeWriteConnection();
         }
 
-
+        logger.info("urlCorpusConstruct end");
     }
 
     /**
@@ -265,6 +269,7 @@ public class App{
             updateSnopesLog(url);
 
         }
+        logger.info("claimEvideceExtractorOnSnopes end");
     }
 
     /**
@@ -344,6 +349,7 @@ public class App{
         es.awaitTermination(600, TimeUnit.MINUTES);
 
         System.out.println("Local links check if they are on archive has been done!");
+        logger.info("localLinksCheckInArchive end");
     }
 
     /**
@@ -379,7 +385,7 @@ public class App{
         es.awaitTermination(600, TimeUnit.MINUTES);
 
         System.out.println("Original Document extraction on original website has been done!");
-
+        logger.info("localLinksExtractorInWeb end");
     }
 
     /**
@@ -439,7 +445,7 @@ public class App{
         es.awaitTermination(600, TimeUnit.MINUTES);
 
         System.out.println("original document extraction on Snopes has been done!");
-
+        logger.info("snopesLinksHandler end");
     }
 
 //    /**
