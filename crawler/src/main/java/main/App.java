@@ -42,28 +42,32 @@ public class App{
     public void start(String[] args ) throws Exception{
 
         long startTime = System.nanoTime();
-         
+        String running_dir="";
+        if (args.length>1){
+            running_dir=args[1];
+        }
+        
 
         if (args.length>0 && args[0].equals("mode3")){
             
-            urlCorpusConstruct();
-            claimEvideceExtractorOnSnopes(Constants.UNIQUE_URLS_CORPUS);
+            urlCorpusConstruct(running_dir);
+            claimEvideceExtractorOnSnopes(Constants.UNIQUE_URLS_CORPUS,running_dir);
         }else{
             String filePath = Constants.INITIAL_DATA+Constants.SNOPES_URLS;
-            globalUrlsCheckInCrawl(filePath);
-            claimEvideceExtractorWithCrawl();
-            deleteDownloads();
-            claimEvideceExtractorOnSnopes(Constants.NOT_FOUND_URLS);
+            globalUrlsCheckInCrawl(filePath,running_dir);
+            claimEvideceExtractorWithCrawl(running_dir);
+            deleteDownloads(running_dir);
+            claimEvideceExtractorOnSnopes(Constants.NOT_FOUND_URLS,running_dir);
         }
 
         if (args[0].equals("mode1") || args[0].equals("mode2")){
-            annotatingLabel();
+            annotatingLabel(  running_dir);
         }
 
         if (args[0].equals("mode1") || args[0].equals("mode3")){
-            localLinksCheckInArchive();
-            localLinksExtractorInWeb();
-            snopesLinksHandler();
+            localLinksCheckInArchive(  running_dir);
+            localLinksExtractorInWeb(running_dir);
+            snopesLinksHandler(running_dir);
         }
 
         long endTime = System.nanoTime();
@@ -75,7 +79,7 @@ public class App{
      * delete the download snapshots of Snopes URLs
      */
 
-    private void deleteDownloads(){
+    private void deleteDownloads(String running_dir){
         File file = new File(System.getProperty("user.dir"));
         File downloadDir = new File(file + "/DownloadFiles");
         try {
@@ -88,7 +92,12 @@ public class App{
     /**
      * Crawler4j crawl latest fact-checking urls on the Snopes, filter out repeated urls.
      */
-    private void urlCorpusConstruct(){
+    private void urlCorpusConstruct(String running_dir){
+        File f2 = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.UNIQUE_URLS_CORPUS);
+        if(f2.exists()){
+            System.out.println("Corpus1.txt has been done, start extracting!");
+            return;
+        }
         logger.info("urlCorpusConstruct start");
         CrawlController factCheckUrlController = factCheckUrlCrawlConfig();
         if(factCheckUrlController!=null){
@@ -122,7 +131,7 @@ public class App{
      * output: Found_URLs file stores url crawled by common crawl, NOT_FOUND_URLS
      * @throws Exception
      */
-    private void globalUrlsCheckInCrawl(String filePath) throws Exception{
+    private void globalUrlsCheckInCrawl(String filePath,String running_dir) throws Exception{
 
         ArrayList<String> urls = readUlrs(filePath);
         String notFoundFile = Constants.NOT_FOUND_URLS;
@@ -166,7 +175,7 @@ public class App{
      *         the url with null html content or cannot download will be stored into the NOT_FOUND_URLs file.
      * @throws Exception
      */
-    private void claimEvideceExtractorWithCrawl() throws Exception{
+    private void claimEvideceExtractorWithCrawl(String running_dir) throws Exception{
         String foundUrls = Constants.RESULT_STORAGE_DIRECTORY+ Constants.FOUND_URLS;
         ArrayList<String> urls = readUlrs(foundUrls);
         ArrayList<String> processedUrls = new ArrayList<String>();
@@ -228,7 +237,7 @@ public class App{
      *         LinkCorpus stored the snopes url and links in the origin text.
      * @throws Exception
      */
-    private void claimEvideceExtractorOnSnopes(String filename){
+    public void claimEvideceExtractorOnSnopes(String filename,String running_dir){
 
         String notFoundUrls = Constants.RESULT_STORAGE_DIRECTORY+filename;
         ArrayList<String> urls = readUlrs(notFoundUrls);
@@ -280,7 +289,7 @@ public class App{
      *         NotFoundLinks stores links not crawled by webarchive
      * @throws Exception
      */
-    public void localLinksCheckInArchive() throws Exception{
+    public void localLinksCheckInArchive(String running_dir) throws Exception{
         ArrayList<String[]> lines = new ArrayList<String[]>();
         CSVReader reader = new CSVReader(new FileReader(Constants.RESULT_STORAGE_DIRECTORY + Constants.ORIGIN_LINK_CORPUS));
 
@@ -356,7 +365,7 @@ public class App{
      * Crawl Links that cannot find on the web archive with its original url
      * @throws Exception
      */
-    public void localLinksExtractorInWeb() throws Exception{
+    public void localLinksExtractorInWeb(String running_dir) throws Exception{
         ArrayList<String> lines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_IN_AV);
         List<String[]> restPairs = new ArrayList<String[]>();
 
@@ -392,7 +401,7 @@ public class App{
      * handle links in Doc Link Corpus that are the Snopes URLs
      * @throws Exception
      */
-    private void snopesLinksHandler() throws Exception{
+    private void snopesLinksHandler(String running_dir) throws Exception{
         ArrayList<String> lines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS);
         List<String[]> snopesPairs = new ArrayList<String[]>();
 
@@ -623,7 +632,7 @@ public class App{
      */
 
 
-    private void annotatingLabel() throws Exception{
+    private void annotatingLabel(String running_dir) throws Exception{
 
         CSVReader reader = new CSVReader(new FileReader(Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS));
         //skip the header

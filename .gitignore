@@ -19,3 +19,5 @@ Results/Corpus2_annotated.csv
 src/test/resources/**
 crawler/.factorypath
 crawler/log/**
+Results/**
+log/**
