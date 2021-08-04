@@ -14,17 +14,19 @@ public class SnopesExtractorThread{
     private String snopesUrl;
     private String html;
     private MyCsvFileWriter myCsvFileWriter;
+    private String running_dir;
 
-    public SnopesExtractorThread(String snopesUrl,String html){
+    public SnopesExtractorThread(String snopesUrl,String html, String running_dir){
 
         this.snopesUrl = snopesUrl;
         this.html = html;
         myCsvFileWriter = new MyCsvFileWriter();
+        this.running_dir=running_dir;
     }
 
     public void process(){
-        MyFileWriter fileWriter = new MyFileWriter();
-        ClaimEvidenceExtractor claimEvidenceExtractor = new ClaimEvidenceExtractor(html,snopesUrl," ",0L,0);
+        MyFileWriter fileWriter = new MyFileWriter(running_dir);
+        ClaimEvidenceExtractor claimEvidenceExtractor = new ClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
         String claim = claimEvidenceExtractor.getClaim();
         String offset = Long.toString(claimEvidenceExtractor.getOffset());
         String length = Integer.toString(claimEvidenceExtractor.getLength());
@@ -96,7 +98,7 @@ public class SnopesExtractorThread{
     }
 
     private synchronized void updateCsvFile(String[] content,String filename){
-        myCsvFileWriter.openWriteConnection(filename);
+        myCsvFileWriter.openWriteConnection(filename,running_dir);
         myCsvFileWriter.writeLine(content);
         myCsvFileWriter.closeWriteConnection();
     }

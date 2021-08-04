@@ -5,6 +5,7 @@ package constants;
      */
 public class Constants {
         // public static String RUNNING_DIR="src/test/resources/";
+        public static String TEST_DIR="src/test/resources/testcase/testClaimEvideceExtractorWithCrawl1/";
         public static String RUNNING_DIR="";
         public static String RESULT_STORAGE_DIRECTORY=RUNNING_DIR+"Results/"; // Directory path to store all the results
         public static String INITIAL_DATA = RUNNING_DIR+"Data/"; //Directory to store the Annotations and provided Corpus1

@@ -18,7 +18,7 @@ public class CCChecker4Urls extends AbstractChecker {
     private String logFile;
     private String commonCrawlIndex="http://index.commoncrawl.org";
     private String connectUrl = "-index?url=";
-
+    private String running_dir;
     private ArrayList<String> indexServers = new ArrayList<String>(){
         {
             add("/CC-MAIN-2018-05");
@@ -66,10 +66,11 @@ public class CCChecker4Urls extends AbstractChecker {
         }
     };
 
-    public CCChecker4Urls(String notFoundUrls, String foundUrls, String logFile){
+    public CCChecker4Urls(String notFoundUrls, String foundUrls, String logFile,String running_dir){
         this.notFoundUrls=notFoundUrls;
         this.foundUrls = foundUrls;
         this.logFile = logFile;
+        this.running_dir=running_dir;
     }
 
     /**
@@ -98,7 +99,7 @@ public class CCChecker4Urls extends AbstractChecker {
      * @param content
      */
     private synchronized void writeToFile(String file, String content){
-        MyFileWriter myFileWriter = new MyFileWriter();
+        MyFileWriter myFileWriter = new MyFileWriter(running_dir);
         myFileWriter.openWriteConnection(file);
         myFileWriter.writeLine(content);
         myFileWriter.closeWriteConnection();

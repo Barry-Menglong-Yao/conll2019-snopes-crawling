@@ -12,12 +12,13 @@ public class CheckerThread4Urls implements Runnable{
     private int partLength;
     private ArrayList<String> urls;
     private Checker checker;
-
-    public CheckerThread4Urls(int thredId, ArrayList<String> urls, int partLength, Checker checker){
+    private String running_dir;
+    public CheckerThread4Urls(int thredId, ArrayList<String> urls, int partLength, Checker checker ){
         this.threadId = thredId;
         this.urls = urls;
         this.partLength = partLength;
         this.checker = checker;
+      
     }
 
 

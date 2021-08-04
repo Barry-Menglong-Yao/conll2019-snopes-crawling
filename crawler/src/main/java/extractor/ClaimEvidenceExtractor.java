@@ -36,17 +36,18 @@ public class ClaimEvidenceExtractor {
     private String serverURL;
     private long offset;
     private int length;
-    private MyFileWriter fileWriter = new MyFileWriter();
+    private MyFileWriter fileWriter;
     private Document doc;
 
 
-    public ClaimEvidenceExtractor(String htmlContent,String url,String serverURL,long offset,int length){
+    public ClaimEvidenceExtractor(String htmlContent,String url,String serverURL,long offset,int length,String running_dir){
         this.htmlContent = htmlContent;
         this.url = url;
         this.dkProUtils = new Utils();
         this.serverURL = serverURL;
         this.offset = offset;
         this.length = length;
+        this.fileWriter = new MyFileWriter(running_dir);
         doc = text2Document(htmlContent);
     }
 
@@ -69,8 +70,16 @@ public class ClaimEvidenceExtractor {
 
     private String categoryExtractor(Document doc){
         Elements mainArticle =  doc.select("article");
-        Elements category = mainArticle.first().previousElementSibling().select("a");
+        Elements category ;
         String newsCategory = "";
+        try{
+          category = mainArticle.first().previousElementSibling().select("a");
+        }catch(Exception e){
+            category=  doc.select("article > nav > div:nth-child(2) > a");
+        }
+   
+
+
         if (category.size()>0){
             newsCategory = stringNormalize(category.get(0).text(),true,true);
             return newsCategory;
@@ -80,7 +89,12 @@ public class ClaimEvidenceExtractor {
 
     private String subCategoryExtractor(Document doc){
         Elements mainArticle =  doc.select("article");
-        Elements category = mainArticle.first().previousElementSibling().select("a");
+        Elements category ;
+        try{
+              category = mainArticle.first().previousElementSibling().select("a");
+        }catch(Exception e){
+            category=  doc.select("article > nav > div:nth-child(3) > a");
+        }
         String newsSubCategory="";
         if (category.size()>1){
             newsSubCategory = stringNormalize(category.get(1).text(),true,true);
@@ -90,14 +104,23 @@ public class ClaimEvidenceExtractor {
     }
 
     private String headlineExtractor(Document doc){
+         
         Elements mainArticle = doc.select("article");
         Elements header = mainArticle.first().select("header");
         String headline  = (header.first().getElementsByAttributeValue("itemprop","headline")).text();
+        if (headline.length()<1 ){
+            headline  = (header.first()).text();
+             
+             
+        }
+
         if (headline.length()>0){
             headline = stringNormalize(headline,true,true);
             return headline;
+        }else{
+            return "";
         }
-        return "";
+        
     }
 
     private String descriptionExtractor(Document doc){
@@ -111,10 +134,19 @@ public class ClaimEvidenceExtractor {
         return "";
     }
 
-
+    private Elements extractClaimFromSpecialLocation(Document doc){
+        Elements claimElement =doc.getElementsByAttributeValue("itemprop","claimReviewed");
+        if (claimElement.text().length()>0){
+            return claimElement;
+        }else{
+            claimElement = doc.select("div.claim-text.card-body");
+            // System.out.println(claimElement.text());
+        }
+        return claimElement ;
+    }
     private String claimExtractor(Document doc){
-        Elements articleBody = doc.select("div.article-text");
-        Elements claimPara = doc.getElementsByAttributeValue("itemprop","claimReviewed");
+        Elements articleBody = getArticleBody( doc);
+        Elements claimPara = extractClaimFromSpecialLocation(doc);
 //        System.out.println(articleBody);
         String claim = "";
         if (claimPara.text().length()>0){
@@ -185,10 +217,21 @@ public class ClaimEvidenceExtractor {
         return claim;
     }
 
+
+    private Elements extractTruthfulnessParaFromSpecifiedLocation(Document doc){
+        Elements truthfulnesPara=doc.getElementsByAttributeValue("itemprop","reviewRating");
+        if (truthfulnesPara.text().length()>0){
+            return truthfulnesPara;
+        }else{
+            truthfulnesPara = doc.select("div.media-body.d-flex.flex-column.align-self-center > span");
+            return truthfulnesPara;
+        }
+        
+    }
     private String truthfulnessExtractor(Document doc){
 
-        Elements articleBody = doc.select("div.article-text");
-        Elements truthfulnesPara = doc.getElementsByAttributeValue("itemprop","reviewRating");
+        Elements articleBody = getArticleBody( doc);
+        Elements truthfulnesPara = extractTruthfulnessParaFromSpecifiedLocation(doc);
         String sTruthfulness = "";
         if (truthfulnesPara.text().length()>0){
             sTruthfulness = truthfulnesPara.text();
@@ -284,7 +327,7 @@ public class ClaimEvidenceExtractor {
 
     private HashSet<String> evidencesExtractor(Document doc){
         HashSet<String> evidences = new HashSet<String>();
-        Elements articleBody = doc.select("div.article-text");
+        Elements articleBody = getArticleBody( doc);
         Elements temArticleBody = articleBody;
         if (articleBody.select("div.article-text-inner").size()!= 0){
             temArticleBody = articleBody.select("div.article-text-inner");
@@ -351,7 +394,7 @@ public class ClaimEvidenceExtractor {
     }
 
     private String sourceExtractor(Document doc){
-        Elements articleBody = doc.select("div.article-text");
+        Elements articleBody = getArticleBody( doc);
         Elements articleSourceBox = articleBody.first().getElementsByClass("article-sources-box");
         String sSources = "";
         if (articleSourceBox.size() > 0) {
@@ -376,10 +419,16 @@ public class ClaimEvidenceExtractor {
         return sSources;
     }
 
-
+    private Elements getArticleBody(Document doc){
+        Elements articleBody =doc.select("div.article-text");
+        if (articleBody.text().length()<1){
+            articleBody=doc.select("main > article");
+        }
+        return articleBody;
+    }
     private String originExtactor(Document doc){
         String sOrigin = "";
-        Elements articleBody = doc.select("div.article-text");
+        Elements articleBody = getArticleBody( doc);
         Element articleText = null;
         if (articleBody.size()==1){
             articleText = articleBody.first();
@@ -402,10 +451,15 @@ public class ClaimEvidenceExtractor {
                 if (para.tagName()=="h3" && para.text().contains("ORIGIN")){
                     startExtractor=true;
                     continue;
+                }else if(para.tagName()=="h3" && para.text().contains("Origin")){
+                    startExtractor=true;
+                    continue;
                 }
+
                 if (para.text().contains("Origins:")){
                     startExtractor=true;
                 }
+
                 if (para.text().contains("Last updated:")){
                     break;
                 }
@@ -473,7 +527,7 @@ public class ClaimEvidenceExtractor {
 
     private HashSet<String> originalLinksExtractor(Document doc){
         HashSet<String> evidenceLinks = new HashSet<String>();
-        Elements articleBody = doc.select("div.article-text");
+        Elements articleBody = getArticleBody( doc);
         Elements paraList = articleBody.select("> p");
         if (paraList.size()==0){
             paraList = articleBody.select("> div > p");

@@ -16,7 +16,7 @@ public class ImageExtractor {
 	public static void main(String[] args) throws Exception {
         String url = "https://www.snopes.com/fact-check/beach-handball-uniforms-photo/"; // double quotes in the content of the website url you want to climb here skipped here
         Document document = Jsoup.connect(url).post();//Get url website html content
-		
+		String running_dir="";
 		Elements elements = document.getElementsByClass("block");
         for (int i = 0; i < elements.size(); i++) {//cyclic output
             Element yuansu= elements.get(i);// used to get a single class with the content of "block"
@@ -24,7 +24,7 @@ public class ImageExtractor {
             String imgurl = yuansu_zi.attr("src");//Get the src attribute value in img
             String imgname = yuansu.attr("title");//Get the class src attribute value in "block"
             
-            obtainImage(imgurl, Constants.RESULT_STORAGE_DIRECTORY+"img/", imgname);//The first parameter is the image path to be downloaded. The second is the stored path. The third is the name of the image.
+            obtainImage(imgurl, running_dir+Constants.RESULT_STORAGE_DIRECTORY+"img/", imgname);//The first parameter is the image path to be downloaded. The second is the stored path. The third is the name of the image.
 		}
 	}
 	public static void obtainImage(String imgurl,String dizhi,String imgname) throws Exception{

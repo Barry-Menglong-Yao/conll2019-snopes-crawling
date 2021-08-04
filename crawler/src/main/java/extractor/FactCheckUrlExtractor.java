@@ -25,7 +25,8 @@ public class FactCheckUrlExtractor extends WebCrawler {
     private MyFileWriter myFileWriter;
 
     public FactCheckUrlExtractor() {
-            myFileWriter = new MyFileWriter();
+        String running_dir="";//TODO 
+            myFileWriter = new MyFileWriter(running_dir);
     }
 
     /**
@@ -84,14 +85,14 @@ public class FactCheckUrlExtractor extends WebCrawler {
     
 
 
-    public static void main(String[] args) {
-        MyFileWriter myFileWriter = new MyFileWriter();
-        myFileWriter.openWriteConnection(Constants.SNOPES_URLS_CORPUS);
-        for (int i = 0; i < 3; i++) {
-    //                if (factCheckUrls.get(i).select("a").attr("href").contains(Constants.SNOPES_FACT_CHECK))
-                myFileWriter.writeLine( i+"");
+    // public static void main(String[] args) {
+    //     MyFileWriter myFileWriter = new MyFileWriter();
+    //     myFileWriter.openWriteConnection(Constants.SNOPES_URLS_CORPUS);
+    //     for (int i = 0; i < 3; i++) {
+    // //                if (factCheckUrls.get(i).select("a").attr("href").contains(Constants.SNOPES_FACT_CHECK))
+    //             myFileWriter.writeLine( i+"");
 
-        }
-        myFileWriter.closeWriteConnection();
-    }
+    //     }
+    //     myFileWriter.closeWriteConnection();
+    // }
 }

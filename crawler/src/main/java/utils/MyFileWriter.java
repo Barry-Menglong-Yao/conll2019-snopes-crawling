@@ -8,14 +8,16 @@ public class MyFileWriter {
     private BufferedReader bufferedReader = null;
     private Writer fileWriter = null;
     private String sLine = "";
+    private String running_dir;
 
 
-    public MyFileWriter() {
+    public MyFileWriter(String running_dir) {
         File file = new File(System.getProperty("user.dir"));
         File resultDir = new File(file + "/Results");
         if (!resultDir.exists()){
             createDirectory();
         }
+        this.running_dir=running_dir;
 
 
     }
@@ -25,7 +27,7 @@ public class MyFileWriter {
      * which stores all the intermediate results of and also the Corpora.
      */
     public void createDirectory() {
-        File resultDir = new File(Constants.RESULT_STORAGE_DIRECTORY);
+        File resultDir = new File( running_dir+ Constants.RESULT_STORAGE_DIRECTORY);
         if (!resultDir.exists()) {
             resultDir.mkdir();
         }
@@ -39,14 +41,14 @@ public class MyFileWriter {
      */
     public void createFile(String filename) {
         try {
-            File fFile = new File(Constants.RESULT_STORAGE_DIRECTORY + filename);
+            File fFile = new File( running_dir+ Constants.RESULT_STORAGE_DIRECTORY + filename);
             if (fFile.exists()) {
                 fFile.delete();
             }
             fFile.createNewFile();
         } catch (Exception e) {
             System.err.println(
-                    "Unable to create a file " + filename + " in the directory " + Constants.RESULT_STORAGE_DIRECTORY);
+                    "Unable to create a file " + filename + " in the directory " +  running_dir+Constants.RESULT_STORAGE_DIRECTORY);
             e.printStackTrace();
         }
     }
@@ -58,7 +60,7 @@ public class MyFileWriter {
      *            Name of the file which needs to be updated
      */
     public void openWriteConnection(String filename) {
-        File fFile = new File(Constants.RESULT_STORAGE_DIRECTORY + filename);
+        File fFile = new File( running_dir+Constants.RESULT_STORAGE_DIRECTORY + filename);
         try {
             fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fFile, true), "UTF8"));
         } catch (Exception e) {

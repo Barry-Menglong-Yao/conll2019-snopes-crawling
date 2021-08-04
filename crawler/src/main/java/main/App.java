@@ -79,13 +79,13 @@ public class App{
      * delete the download snapshots of Snopes URLs
      */
 
-    private void deleteDownloads(String running_dir){
+    public void deleteDownloads(String running_dir){
         File file = new File(System.getProperty("user.dir"));
-        File downloadDir = new File(file + "/DownloadFiles");
+        File downloadDir = new File(file+"/" + Constants.DOWNLOAD_STORAGE_DIRECTORY);// "/DownloadFiles"
         try {
             FileUtils.deleteDirectory(downloadDir);
         }catch (Exception e){
-            System.out.println("Download Files directory doesn't exist.");
+            System.out.println("Download Files directory doesn't exist. "+e );
         }
     }
 
@@ -93,13 +93,13 @@ public class App{
      * Crawler4j crawl latest fact-checking urls on the Snopes, filter out repeated urls.
      */
     private void urlCorpusConstruct(String running_dir){
-        File f2 = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.UNIQUE_URLS_CORPUS);
+        File f2 = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.UNIQUE_URLS_CORPUS);
         if(f2.exists()){
             System.out.println("Corpus1.txt has been done, start extracting!");
             return;
         }
         logger.info("urlCorpusConstruct start");
-        CrawlController factCheckUrlController = factCheckUrlCrawlConfig();
+        CrawlController factCheckUrlController = factCheckUrlCrawlConfig(running_dir);
         if(factCheckUrlController!=null){
             factCheckUrlController.addSeed(Constants.SNOPES_FACTCHECK_WEBSITE);
             factCheckUrlController.startNonBlocking(FactCheckUrlExtractor.class,40);
@@ -109,14 +109,14 @@ public class App{
             }
 
         }
-        String snopesURLCorpus=Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_URLS_CORPUS;
+        String snopesURLCorpus=running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_URLS_CORPUS;
         ArrayList<String> snopesUrls = readUlrs(snopesURLCorpus);
         Set<String> uniqueUrls = new HashSet<String>();
         for (String url : snopesUrls){
             uniqueUrls.add(url);
         }
 
-        MyFileWriter myFileWriter = new MyFileWriter();
+        MyFileWriter myFileWriter = new MyFileWriter(running_dir);
         for (String url : uniqueUrls){
             myFileWriter.openWriteConnection(Constants.UNIQUE_URLS_CORPUS);
             myFileWriter.writeLine(url);
@@ -138,14 +138,14 @@ public class App{
         String foundFile = Constants.FOUND_URLS;
         String logFile = Constants.CHECKE_LOGGER;
 
-        File f = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS);
-        File f1 = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.CHECKE_LOGGER);
+        File f = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS);
+        File f1 = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CHECKE_LOGGER);
         if (f.exists()){
             System.out.println("Checking on Common Crawl has been done, start extracting!");
             return;
         }
         if (f1.exists()){
-           ArrayList<String> crawledUrls = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.CHECKE_LOGGER);
+           ArrayList<String> crawledUrls = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CHECKE_LOGGER);
            urls = removeCrawledUrls(urls,crawledUrls);
         }
         System.out.println(urls.size());
@@ -158,7 +158,7 @@ public class App{
         int partLength = urls.size()%numThread ==0 ? urls.size()/numThread : urls.size()/numThread +1;
 
         for (int i=0;i<numThread;i++){
-            Checker checker = new CCChecker4Urls(notFoundFile,foundFile,logFile);
+            Checker checker = new CCChecker4Urls(notFoundFile,foundFile,logFile,running_dir);
             es.execute(new CheckerThread4Urls(i,urls,partLength,checker));
         }
         es.shutdown();
@@ -175,25 +175,25 @@ public class App{
      *         the url with null html content or cannot download will be stored into the NOT_FOUND_URLs file.
      * @throws Exception
      */
-    private void claimEvideceExtractorWithCrawl(String running_dir) throws Exception{
-        String foundUrls = Constants.RESULT_STORAGE_DIRECTORY+ Constants.FOUND_URLS;
+    public void claimEvideceExtractorWithCrawl(String running_dir) throws Exception{
+        String foundUrls = running_dir+Constants.RESULT_STORAGE_DIRECTORY+ Constants.FOUND_URLS;
         ArrayList<String> urls = readUlrs(foundUrls);
         ArrayList<String> processedUrls = new ArrayList<String>();
         for (String url : urls){
             processedUrls.add(url);
         }
 
-        File f1 = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS);
-        File f = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.CC_EXTRACTOR_LOGGER);
-        File f2 = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.ORIGIN_DOC_CORPUS);
+        File f1 = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS);
+        File f = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CC_EXTRACTOR_LOGGER);
+        File f2 = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.ORIGIN_DOC_CORPUS);
 
         //write csv file headers
         if (!f1.exists()){
             MyCsvFileWriter myCsvFileWriter = new MyCsvFileWriter();
-            myCsvFileWriter.openWriteConnection(Constants.CLAIM_EVIDENCE_CORPUS);
+            myCsvFileWriter.openWriteConnection(Constants.CLAIM_EVIDENCE_CORPUS,running_dir);
             myCsvFileWriter.writeLine(Constants.SNOPES_CLAIM_EVIDENCE_HEADERS.split(","));
             myCsvFileWriter.closeWriteConnection();
-            myCsvFileWriter.openWriteConnection(Constants.ORIGIN_LINK_CORPUS);
+            myCsvFileWriter.openWriteConnection(Constants.ORIGIN_LINK_CORPUS,running_dir);
             myCsvFileWriter.writeLine(Constants.SNOPES_URL_LINKS_HEADERS.split(","));
             myCsvFileWriter.closeWriteConnection();
         }
@@ -204,7 +204,7 @@ public class App{
         }
 
         if (f.exists()){
-            ArrayList<String> crawledUrls = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.CC_EXTRACTOR_LOGGER);
+            ArrayList<String> crawledUrls = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CC_EXTRACTOR_LOGGER);
             processedUrls = removeCrawledUrls(processedUrls,crawledUrls);
         }
 
@@ -220,7 +220,7 @@ public class App{
         System.out.println(processedUrls.size());
         int chunkLength = length % threadSize == 0 ? length / threadSize : length / threadSize + 1;
         for(int threadId =0; threadId<threadSize;threadId++){
-            es.execute(new ClaimEvidenceExtractorThread(threadId,processedUrls,chunkLength));
+            es.execute(new ClaimEvidenceExtractorThread(threadId,processedUrls,chunkLength,running_dir));
         }
 
         es.shutdown();
@@ -239,7 +239,7 @@ public class App{
      */
     public void claimEvideceExtractorOnSnopes(String filename,String running_dir){
 
-        String notFoundUrls = Constants.RESULT_STORAGE_DIRECTORY+filename;
+        String notFoundUrls = running_dir+Constants.RESULT_STORAGE_DIRECTORY+filename;
         ArrayList<String> urls = readUlrs(notFoundUrls);
         ArrayList<String> processedUrls = new ArrayList<String>();
 
@@ -249,25 +249,25 @@ public class App{
         }
         processedUrls = new ArrayList<String>(new HashSet<String>(processedUrls));
 
-        File f = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_EXTRACTOR_LOGGER);
-        File f2 = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.ORIGIN_DOC_CORPUS);
+        File f = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_EXTRACTOR_LOGGER);
+        File f2 = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.ORIGIN_DOC_CORPUS);
         if(f2.exists()){
             System.out.println("Checking on Common Crawl has been done, start extracting!");
             return;
         }
 
         if (f.exists()){
-            ArrayList<String> crawledUrls = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_EXTRACTOR_LOGGER);
+            ArrayList<String> crawledUrls = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_EXTRACTOR_LOGGER);
             processedUrls = removeCrawledUrls(processedUrls,crawledUrls);
         }
         System.out.println(processedUrls.size());
-        MyFileWriter myFileWriter = new MyFileWriter();
+        MyFileWriter myFileWriter = new MyFileWriter(running_dir);
 
         for (String url : processedUrls){
             try{
                 AccessURL accessURL = new AccessURL(url);
                 String html = accessURL.getUrlContent();
-                SnopesExtractorThread snopesExtractorThread = new SnopesExtractorThread(url,html);
+                SnopesExtractorThread snopesExtractorThread = new SnopesExtractorThread(url,html,running_dir);
                 snopesExtractorThread.process();
             }catch (Exception e){
                 myFileWriter.openWriteConnection(Constants.CORRUPTED_URLS_SNOPES);
@@ -275,7 +275,7 @@ public class App{
                 myFileWriter.closeWriteConnection();
                 e.printStackTrace();
             }
-            updateSnopesLog(url);
+            updateSnopesLog(url,running_dir);
 
         }
         logger.info("claimEvideceExtractorOnSnopes end");
@@ -291,13 +291,13 @@ public class App{
      */
     public void localLinksCheckInArchive(String running_dir) throws Exception{
         ArrayList<String[]> lines = new ArrayList<String[]>();
-        CSVReader reader = new CSVReader(new FileReader(Constants.RESULT_STORAGE_DIRECTORY + Constants.ORIGIN_LINK_CORPUS));
+        CSVReader reader = new CSVReader(new FileReader(running_dir+Constants.RESULT_STORAGE_DIRECTORY + Constants.ORIGIN_LINK_CORPUS));
 
         //writer csv file headers
-        File docFile = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.ORIGIN_DOC_CORPUS);
+        File docFile = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.ORIGIN_DOC_CORPUS);
         if (!docFile.exists()){
             MyCsvFileWriter corpus3writer = new MyCsvFileWriter();
-            corpus3writer.openWriteConnection(Constants.ORIGIN_DOC_CORPUS);
+            corpus3writer.openWriteConnection(Constants.ORIGIN_DOC_CORPUS,running_dir);
             corpus3writer.writeLine(Constants.ORIGIN_DOC_HEADERS.split(","));
             corpus3writer.closeWriteConnection();
         }
@@ -305,7 +305,7 @@ public class App{
 
         String[] nextLine;
         nextLine = reader.readNext();
-        MyFileWriter myFileWriter = new MyFileWriter();
+        MyFileWriter myFileWriter = new MyFileWriter(running_dir);
 
         while ((nextLine = reader.readNext()) != null) {
             if (nextLine[1].length() == 0 || nextLine[0].length()==0) {
@@ -314,9 +314,9 @@ public class App{
             lines.add(nextLine);
         }
 
-        File logFile = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
+        File logFile = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
         if (logFile.exists()){
-            ArrayList<String> crawledLines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
+            ArrayList<String> crawledLines = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
             //TODO lines = removeCrawledLines(lines,crawledLines);
         }
 
@@ -330,7 +330,7 @@ public class App{
                 myFileWriter.openWriteConnection(Constants.SNOPES_LINKS);
                 myFileWriter.writeLine(line[0]+";"+line[1]);
                 myFileWriter.closeWriteConnection();
-                updateLinksLog(line[0]+";"+line[1],Constants.ALL_LINKS_LOGGER);
+                updateLinksLog(line[0]+";"+line[1],Constants.ALL_LINKS_LOGGER,running_dir);
                 continue;
             }else {
                 processedLinks.add(line);
@@ -342,7 +342,7 @@ public class App{
         ExecutorService es = Executors.newFixedThreadPool(numThread);
         int partLength = archiveLinks.size()%numThread ==0 ? archiveLinks.size()/numThread : archiveLinks.size()/numThread +1;
         for (int i=0;i<numThread;i++){
-            Checker checker = new WebChecker(Constants.ALL_LINKS_LOGGER);
+            Checker checker = new WebChecker(Constants.ALL_LINKS_LOGGER,running_dir);
             es.execute(new CheckerThread4Links(i,archiveLinks,partLength,checker));
         }
         es.shutdown();
@@ -351,8 +351,8 @@ public class App{
         es = Executors.newFixedThreadPool(numThread);
         partLength = processedLinks.size()%numThread ==0 ? processedLinks.size()/numThread : processedLinks.size()/numThread +1;
         for (int i=0;i<numThread;i++){
-            Checker checker = new WebArchiveChecker(Constants.ALL_LINKS_LOGGER);
-            es.execute(new CheckerThread4Links(i,processedLinks,partLength,checker));
+            Checker checker = new WebArchiveChecker(Constants.ALL_LINKS_LOGGER,running_dir);
+            es.execute(new CheckerThread4Links(i,processedLinks,partLength,checker ));
         }
         es.shutdown();
         es.awaitTermination(600, TimeUnit.MINUTES);
@@ -366,12 +366,12 @@ public class App{
      * @throws Exception
      */
     public void localLinksExtractorInWeb(String running_dir) throws Exception{
-        ArrayList<String> lines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_IN_AV);
+        ArrayList<String> lines = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_IN_AV);
         List<String[]> restPairs = new ArrayList<String[]>();
 
-        File logFile = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_LOGGER);
+        File logFile = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_LOGGER);
         if (logFile.exists()){
-            ArrayList<String> crawledLines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_LOGGER);
+            ArrayList<String> crawledLines = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_LOGGER);
             lines = removeCrawledUrls(lines,crawledLines);
         }
 
@@ -387,7 +387,7 @@ public class App{
         int partLength = restPairs.size()%numThread ==0 ? restPairs.size()/numThread : restPairs.size()/numThread +1;
 
         for (int i=0;i<numThread;i++){
-            Checker checker = new WebChecker(Constants.NOT_FOUND_LINKS_LOGGER);
+            Checker checker = new WebChecker(Constants.NOT_FOUND_LINKS_LOGGER,running_dir);
             es.execute(new CheckerThread4Links(i,restPairs,partLength,checker));
         }
         es.shutdown();
@@ -402,12 +402,12 @@ public class App{
      * @throws Exception
      */
     private void snopesLinksHandler(String running_dir) throws Exception{
-        ArrayList<String> lines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS);
+        ArrayList<String> lines = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS);
         List<String[]> snopesPairs = new ArrayList<String[]>();
 
-        File docFile = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS_LOGGER);
+        File docFile = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS_LOGGER);
         if (docFile.exists()){
-            ArrayList<String> crawledLines = readUlrs(Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS_LOGGER);
+            ArrayList<String> crawledLines = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS_LOGGER);
             lines = removeCrawledUrls(lines,crawledLines);
         }
         lines = new ArrayList<String>(new HashSet<String>(lines));
@@ -419,7 +419,7 @@ public class App{
         for (String snopesLink: lines){
             count+=1;
             String[] snopesLinkpair = snopesLink.split(";",2);
-            CSVReader reader = new CSVReader(new FileReader(Constants.RESULT_STORAGE_DIRECTORY + Constants.CLAIM_EVIDENCE_CORPUS));
+            CSVReader reader = new CSVReader(new FileReader(running_dir+Constants.RESULT_STORAGE_DIRECTORY + Constants.CLAIM_EVIDENCE_CORPUS));
 
             //skip the headr
             String[] nextLine;
@@ -428,8 +428,8 @@ public class App{
             while ((nextLine = reader.readNext()) != null) {
                 if (snopesLinkpair[1].equals(nextLine[0])){
                     String[] content ={snopesLinkpair[0],snopesLinkpair[1]," ",nextLine[12]};
-                    updateCorpus(Constants.ORIGIN_DOC_CORPUS,content);
-                    updateLinksLog(snopesLink,logFile);
+                    updateCorpus(Constants.ORIGIN_DOC_CORPUS,content,running_dir);
+                    updateLinksLog(snopesLink,logFile,running_dir);
                     isProcessed = true;
                     break;
                 }
@@ -447,7 +447,7 @@ public class App{
         int partLength = snopesPairs.size()%numThread ==0 ? snopesPairs.size()/numThread : snopesPairs.size()/numThread +1;
 
         for (int i=0;i<numThread;i++){
-            Checker checker = new WebChecker(logFile);
+            Checker checker = new WebChecker(logFile,running_dir);
             es.execute(new CheckerThread4Links(i,snopesPairs,partLength,checker));
         }
         es.shutdown();
@@ -464,7 +464,7 @@ public class App{
 ////
 ////    private void annotatingLabel() throws Exception{
 ////
-////        CSVReader reader = new CSVReader(new FileReader(Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS));
+////        CSVReader reader = new CSVReader(new FileReader(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS));
 ////        //skip the header
 ////        String[] nextLine;
 ////        nextLine = reader.readNext();
@@ -492,7 +492,7 @@ public class App{
 ////                }
 ////            }
 ////
-////            CSVReader newCorpusReader = new CSVReader(new InputStreamReader(new FileInputStream(Constants.RESULT_STORAGE_DIRECTORY + Constants.ANNOTATED_CORPUS),"UTF-8"));
+////            CSVReader newCorpusReader = new CSVReader(new InputStreamReader(new FileInputStream(running_dir+Constants.RESULT_STORAGE_DIRECTORY + Constants.ANNOTATED_CORPUS),"UTF-8"));
 ////
 ////            //skip the header
 ////            String[] annotatedLine;
@@ -549,7 +549,7 @@ public class App{
 //    private void localLinksCheckInCrawl() throws Exception{
 //        ArrayList<String> lines = readUlrs(Constants.NOT_FOUND_LINKS_IN_AV);
 //        List<String[]> restPairs = new ArrayList<String[]>();
-//        File notFoundFile = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_IN_CC);
+//        File notFoundFile = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.NOT_FOUND_LINKS_IN_CC);
 //
 //
 //        for (String line : lines){
@@ -599,10 +599,10 @@ public class App{
      *
      * @return An instance of the crawl controller
      */
-    private CrawlController factCheckUrlCrawlConfig() {
+    private CrawlController factCheckUrlCrawlConfig(String running_dir) {
         // Specify the configurations required to perform web crawl
         CrawlConfig oCrawlConfig = new CrawlConfig();
-        oCrawlConfig.setCrawlStorageFolder(Constants.RESULT_STORAGE_DIRECTORY);
+        oCrawlConfig.setCrawlStorageFolder(running_dir+Constants.RESULT_STORAGE_DIRECTORY);
 
         // Initialize the controller that manages the crawling session
         PageFetcher oPageFetcher = new PageFetcher(oCrawlConfig);
@@ -618,9 +618,9 @@ public class App{
         return oCrawlController;
     }
 
-    private void updateCorpus(String filename,String[] content){
+    private void updateCorpus(String filename,String[] content,String running_dir){
         MyCsvFileWriter myCsvFileWriter = new MyCsvFileWriter();
-        myCsvFileWriter.openWriteConnection(filename);
+        myCsvFileWriter.openWriteConnection(filename,running_dir);
         myCsvFileWriter.writeLine(content);
         myCsvFileWriter.closeWriteConnection();
     }
@@ -634,19 +634,19 @@ public class App{
 
     private void annotatingLabel(String running_dir) throws Exception{
 
-        CSVReader reader = new CSVReader(new FileReader(Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS));
+        CSVReader reader = new CSVReader(new FileReader(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.CLAIM_EVIDENCE_CORPUS));
         //skip the header
         String[] nextLine;
         nextLine = reader.readNext();
 
-        File f = new File(Constants.RESULT_STORAGE_DIRECTORY+Constants.OUR_ANNOTATED_CORPUS);
+        File f = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.OUR_ANNOTATED_CORPUS);
         if (f.exists()){
             System.out.println("Annotation has been done");
             return;
         }
 
         MyCsvFileWriter myCsvFileWriter = new MyCsvFileWriter();
-        myCsvFileWriter.openWriteConnection(Constants.OUR_ANNOTATED_CORPUS);
+        myCsvFileWriter.openWriteConnection(Constants.OUR_ANNOTATED_CORPUS,running_dir);
         myCsvFileWriter.writeLine(Constants.ANNOTATED_CLAIM_EVIDENCE_HEADERS.split(","));
         myCsvFileWriter.closeWriteConnection();
 
@@ -683,7 +683,7 @@ public class App{
                         content[13]= evidenceSents;
                         content[14]=annotatedLine[3];
                         content[15]=annotatedLine[4];
-                        updateCorpus(Constants.OUR_ANNOTATED_CORPUS,content);
+                        updateCorpus(Constants.OUR_ANNOTATED_CORPUS,content,running_dir);
                         isIncoporate= true;
                         count += 1;
                         break;
@@ -696,7 +696,7 @@ public class App{
                 content[13] = evidenceSents;
                 content[14] = " ";
                 content[15] = " ";
-                updateCorpus(Constants.OUR_ANNOTATED_CORPUS,content);
+                updateCorpus(Constants.OUR_ANNOTATED_CORPUS,content,running_dir);
             }
 
         }
@@ -773,15 +773,15 @@ public class App{
         return cleanLines;
     }
 
-    private void updateSnopesLog(String url){
-        MyFileWriter fileWriter = new MyFileWriter();
+    private void updateSnopesLog(String url, String running_dir){
+        MyFileWriter fileWriter = new MyFileWriter(running_dir);
         fileWriter.openWriteConnection(Constants.SNOPES_EXTRACTOR_LOGGER);
         fileWriter.writeLine(url);
         fileWriter.closeWriteConnection();
     }
 
-    private void updateLinksLog(String url,String filename){
-        MyFileWriter fileWriter = new MyFileWriter();
+    private void updateLinksLog(String url,String filename, String running_dir){
+        MyFileWriter fileWriter = new MyFileWriter(running_dir);
         fileWriter.openWriteConnection(filename);
         fileWriter.writeLine(url);
         fileWriter.closeWriteConnection();

@@ -19,16 +19,19 @@ import java.util.HashSet;
 public class ClaimEvidenceExtractorThread implements Runnable{
     private int threadId;
     private ArrayList<String> urls;
-    private MyFileWriter fileWriter = new MyFileWriter();
+    private MyFileWriter fileWriter ;
     private int partLength;
     private MyCsvFileWriter myCsvFileWriter;
+    private String running_dir;
 
 
-    public ClaimEvidenceExtractorThread(int threadId,ArrayList<String> urls,int partLength){
+    public ClaimEvidenceExtractorThread(int threadId,ArrayList<String> urls,int partLength,String running_dir){
         this.threadId = threadId;
         this.urls = urls;
         this.partLength = partLength;
         myCsvFileWriter = new MyCsvFileWriter();
+        this.running_dir=running_dir;
+        this.fileWriter = new MyFileWriter(running_dir);
     }
 
 
@@ -72,7 +75,7 @@ public class ClaimEvidenceExtractorThread implements Runnable{
                 System.out.println("html content in url " +url +" is null");
                 updatedNotFoundUrl(snopesUrl);
             }else {
-                ClaimEvidenceExtractor claimEvidenceExtractor = new ClaimEvidenceExtractor(html,snopesUrl,downloadUrl,offset,length);
+                ClaimEvidenceExtractor claimEvidenceExtractor = new ClaimEvidenceExtractor(html,snopesUrl,downloadUrl,offset,length,running_dir);
                 update(claimEvidenceExtractor);
             }
         }
@@ -170,7 +173,7 @@ public class ClaimEvidenceExtractorThread implements Runnable{
     }
 
     private void updateCsvFile(String[] content,String fileName){
-        myCsvFileWriter.openWriteConnection(fileName);
+        myCsvFileWriter.openWriteConnection(fileName,this.running_dir);
         myCsvFileWriter.writeLine(content);
         myCsvFileWriter.closeWriteConnection();
     }

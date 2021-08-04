@@ -17,14 +17,14 @@ public class MyCsvFileWriter {
      * This function is responsible to create the the Directory named 'Results'
      * which stores all the intermediate results of and also the Corpora.
      */
-    public void createDirectory() {
-        File file = new File(System.getProperty("user.dir"));
-        File resultDir = new File(file + "/Results");
-        if (!resultDir.exists()) {
-            resultDir.mkdir();
-        }
-        Constants.RESULT_STORAGE_DIRECTORY = resultDir.getPath();
-    }
+    // public void createDirectory() {
+    //     File file = new File(System.getProperty("user.dir"));
+    //     File resultDir = new File(file + "/Results");
+    //     if (!resultDir.exists()) {
+    //         resultDir.mkdir();
+    //     }
+    //     running_dir+Constants.RESULT_STORAGE_DIRECTORY = resultDir.getPath();
+    // }
 
     /**
      * This function is used to create a new file.
@@ -32,19 +32,19 @@ public class MyCsvFileWriter {
      * @param filename
      *            Name of the file to be created
      */
-    public void createFile(String filename) {
-        try {
-            File fFile = new File(Constants.RESULT_STORAGE_DIRECTORY + filename);
-            if (fFile.exists()) {
-                fFile.delete();
-            }
-            fFile.createNewFile();
-        } catch (Exception e) {
-            System.err.println(
-                    "Unable to create a file " + filename + " in the directory " + Constants.RESULT_STORAGE_DIRECTORY);
-            e.printStackTrace();
-        }
-    }
+    // public void createFile(String filename) {
+    //     try {
+    //         File fFile = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY + filename);
+    //         if (fFile.exists()) {
+    //             fFile.delete();
+    //         }
+    //         fFile.createNewFile();
+    //     } catch (Exception e) {
+    //         System.err.println(
+    //                 "Unable to create a file " + filename + " in the directory " + running_dir+Constants.RESULT_STORAGE_DIRECTORY);
+    //         e.printStackTrace();
+    //     }
+    // }
 
     /**
      * This function is used to open the write connection
@@ -52,9 +52,9 @@ public class MyCsvFileWriter {
      * @param filename
      *            Name of the file which needs to be updated
      */
-    public void openWriteConnection(String filename) {
+    public void openWriteConnection(String filename,String running_dir ) {//
         try {
-            FileOutputStream fileStream = new FileOutputStream(new File(Constants.RESULT_STORAGE_DIRECTORY+filename),true);
+            FileOutputStream fileStream = new FileOutputStream(new File( running_dir+Constants.RESULT_STORAGE_DIRECTORY+filename),true);
             OutputStreamWriter outputStream = new OutputStreamWriter(fileStream, "UTF-8");
             writer = new CSVWriter(outputStream,CSVWriter.DEFAULT_SEPARATOR,CSVWriter.DEFAULT_QUOTE_CHARACTER);
         } catch (Exception e) {

@@ -14,12 +14,14 @@ public class CheckerThread4Links implements Runnable{
     private int partLength;
     private List<String[]> urls;
     private Checker checker;
+    
 
-    public CheckerThread4Links(int thredId, List<String[]> urls, int partLength, Checker checker){
+    public CheckerThread4Links(int thredId, List<String[]> urls, int partLength, Checker checker ){
         this.threadId = thredId;
         this.urls = urls;
         this.partLength = partLength;
         this.checker = checker;
+         
     }
 
 

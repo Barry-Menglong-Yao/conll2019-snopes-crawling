@@ -22,11 +22,12 @@ public class WebArchiveChecker extends AbstractChecker {
     private MyCsvFileWriter myCsvFileWriter;
     private MyFileWriter myFileWriter;
     private String logFile;
-
-    public WebArchiveChecker(String logFile){
+    private String running_dir;
+    public WebArchiveChecker(String logFile,String running_dir){
         myCsvFileWriter=new MyCsvFileWriter();
-        myFileWriter = new MyFileWriter();
+        myFileWriter = new MyFileWriter(running_dir);
         this.logFile = logFile;
+        this.running_dir=running_dir;
     }
 
     /**
@@ -128,7 +129,7 @@ public class WebArchiveChecker extends AbstractChecker {
      * @param content
      */
     private void updateCorpus(String[] content){
-        myCsvFileWriter.openWriteConnection(Constants.ORIGIN_DOC_CORPUS);
+        myCsvFileWriter.openWriteConnection(Constants.ORIGIN_DOC_CORPUS,running_dir);
         myCsvFileWriter.writeLine(content);
         myCsvFileWriter.closeWriteConnection();
     }
