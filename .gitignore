@@ -21,3 +21,5 @@ crawler/.factorypath
 crawler/log/**
 Results/**
 log/**
+multi_media/out
+multi_media/storage

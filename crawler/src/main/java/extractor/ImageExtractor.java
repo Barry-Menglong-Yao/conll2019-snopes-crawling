@@ -14,7 +14,13 @@ import constants.Constants;
  
 public class ImageExtractor { 
 	public static void main(String[] args) throws Exception {
-        String url = "https://www.snopes.com/fact-check/beach-handball-uniforms-photo/"; // double quotes in the content of the website url you want to climb here skipped here
+        
+	}
+
+
+	
+	public static void findImageUrl() throws Exception{
+		String url = "https://www.snopes.com/fact-check/beach-handball-uniforms-photo/"; // double quotes in the content of the website url you want to climb here skipped here
         Document document = Jsoup.connect(url).post();//Get url website html content
 		String running_dir="";
 		Elements elements = document.getElementsByClass("block");
