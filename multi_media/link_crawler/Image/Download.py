@@ -8,10 +8,10 @@ import re
 class Download():
     
 
-    def __init__(self,folder,prefix, take=None, links=None, path="images"):
-        self.folder=folder
-        self.queue = link_crawler.Models.Queue.Image.Image()
-        self.complete =  link_crawler.Models.Complete.Image.Image()
+    def __init__(self,run_dir,prefix, take=None, links=None, path="images"):
+        self.folder=run_dir
+        self.queue = link_crawler.Models.Queue.Image.Image(run_dir)
+        self.complete =  link_crawler.Models.Complete.Image.Image(run_dir)
         self.limit = take
         self.path = os.path.join(self.folder , path)
 
@@ -41,9 +41,10 @@ class Download():
                 saving_name=self.gen_name(file,img_id,self.prefix)
                 img = Save.Save(file, saving_name,self.path)
                 img.save()
+                self.complete.add(file)
             except Exception as e:
-                print(str(e))
-            self.complete.add(file)
+                print(f"{e} for {file}")
+            
         self.save()
         return self
 
@@ -60,6 +61,10 @@ class Download():
     def gen_name(self,file_name,img_id,prefix) :
         
         base_name = os.path.basename(urllib.request.urlparse(file_name).path)
+        length=len( base_name)
+        threshold=80
+        if length>threshold:
+            base_name=base_name[length-threshold:length]
         saving_name= prefix+"-"+str(img_id)+"-"+base_name
         
         if not  re.search("\.[a-z][a-z][a-z]",  saving_name) and not  re.search("\.[a-z][a-z][a-z][a-z]", saving_name):

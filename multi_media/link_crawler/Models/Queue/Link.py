@@ -2,8 +2,9 @@ from link_crawler.Models.Model import Model
 
 
 class Link(Model):
-    file_path = 'storage/queue/links.txt'
+     
 
-    def __init__(self):
+    def __init__(self,run_dir):
         Model.__init__(self)
+        self.file_path=run_dir+"/queue_links.txt"
         self.fetch()
