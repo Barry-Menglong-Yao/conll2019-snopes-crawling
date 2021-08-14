@@ -16,7 +16,7 @@ data_path="../crawler/Results_mode1"
 ORIGIN_LINK_CORPUS="LinkCorpus.csv"
 url_to_crawl=os.path.join(data_path,ORIGIN_LINK_CORPUS)
 out_dir="out/running"
-# url_to_crawl="util/tried_image_crawler/test_url2.csv"
+url_to_crawl="util/tried_image_crawler/test_url.csv"
  
 def fetch_img():
     
@@ -32,6 +32,10 @@ def fetch_img():
         if snope_url!=cur_snope_url:
             cur_snope_url=snope_url
             snope_id+=1
+            try:
+                fetch_img_by_newspaper(snope_url, snope_id,"S",run_dir)
+            except Exception as e:
+                print(e)
         try:
             fetch_img_by_newspaper(origin_doc_url, snope_id,evidence_id,run_dir)
         except Exception as e:
@@ -67,7 +71,7 @@ def fetch_img_by_newspaper(url, snope_id,evidence_id,run_dir):
     
 
     filtered_imgs=filter(article.images)
-    prefix=str(snope_id)+"-"+str(evidence_id)
+    prefix=str(snope_id).zfill(5)+"-"+str(evidence_id).zfill(5)
     download = Download(run_dir,prefix,links=filtered_imgs)
     download.start()
 

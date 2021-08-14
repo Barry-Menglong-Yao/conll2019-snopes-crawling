@@ -23,3 +23,7 @@ Results/**
 log/**
 multi_media/out
 multi_media/storage
+corpus4_construction/snopes_ml/__pycache__/ 
+corpus4_construction/snopes_ml/utils/__pycache__/ 
+*.pyc
+corpus4_construction/snopes_ml/utils/__pycache__/__init__.cpython-36.pyc
