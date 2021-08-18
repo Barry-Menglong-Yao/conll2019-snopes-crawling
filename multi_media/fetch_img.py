@@ -11,12 +11,12 @@ import pandas as pd
 import newspaper
 from newspaper import Config
 # import wget
-
+user_agent_str="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"#"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
 data_path="../crawler/Results_mode1"
 ORIGIN_LINK_CORPUS="LinkCorpus.csv"
 url_to_crawl=os.path.join(data_path,ORIGIN_LINK_CORPUS)
 out_dir="out/running"
-url_to_crawl="util/tried_image_crawler/test_url.csv"
+url_to_crawl="util/tried_image_crawler/test_url3.csv"
  
 def fetch_img():
     
@@ -54,14 +54,14 @@ def gen_run_dir():
 def init():
     # Adding information about user agent
     opener=urllib.request.build_opener()
-    opener.addheaders=[('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+    opener.addheaders=[('User-Agent',user_agent_str)]
     urllib.request.install_opener(opener)
     
 def fetch_img_by_newspaper(url, snope_id,evidence_id,run_dir):
-    user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+    user_agent =user_agent_str
     config = Config()
     config.browser_user_agent = user_agent
-    article = Article(url, config=config)
+    article = Article(url.strip(), config=config)
     
     article.download()
 

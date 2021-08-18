@@ -27,3 +27,5 @@ corpus4_construction/snopes_ml/__pycache__/
 corpus4_construction/snopes_ml/utils/__pycache__/ 
 *.pyc
 corpus4_construction/snopes_ml/utils/__pycache__/__init__.cpython-36.pyc
+crawler/Results_mode3/ 
+multi_media/Results/**

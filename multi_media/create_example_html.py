@@ -6,7 +6,7 @@ import webbrowser
 
 
 def main():
-    data_path="out/example/example2/"
+    data_path="out/example/"
     example_dict=read_example(data_path)
     
 
@@ -50,7 +50,7 @@ def main():
 
 
     print(doc)
-    html_name="out/example/example2/"+'img.html'
+    html_name=data_path+'img.html'
     with open(html_name, 'w') as f:
         print(doc,file=f)
     webbrowser.open(html_name) 

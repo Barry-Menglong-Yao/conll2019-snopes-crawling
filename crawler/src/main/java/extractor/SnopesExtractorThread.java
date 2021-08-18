@@ -36,23 +36,22 @@ public class SnopesExtractorThread{
             String truthfulness = claimEvidenceExtractor.getTruthfulness();
             if (!(truthfulness.length() < 1)) {
                 HashSet<String> evidenceSet = claimEvidenceExtractor.getEvidenceSet();
+                String headline = claimEvidenceExtractor.getHeadline();
+                String category = claimEvidenceExtractor.getCategory();
+                String subCategory = claimEvidenceExtractor.getSubCategory();
+                String description = claimEvidenceExtractor.getDescription();
+                String source = claimEvidenceExtractor.getSource();
+                String origin = claimEvidenceExtractor.getOrigin();
+                if (origin.length() < 200) {
+                    fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
+                    fileWriter.writeLine(url+" has no origin or bad origin");
+                    fileWriter.closeWriteConnection();
+                    System.out.println(url + " has no origin");
+                }
                 if (evidenceSet.size() != 0) {
                     fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
                     fileWriter.writeLine(url + " works for extraction!");
                     fileWriter.closeWriteConnection();
-                    String headline = claimEvidenceExtractor.getHeadline();
-                    String category = claimEvidenceExtractor.getCategory();
-                    String subCategory = claimEvidenceExtractor.getSubCategory();
-                    String description = claimEvidenceExtractor.getDescription();
-                    String source = claimEvidenceExtractor.getSource();
-                    String origin = claimEvidenceExtractor.getOrigin();
-
-                    if (origin.length() < 200) {
-                        fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
-                        fileWriter.writeLine(url+" has no origin or bad origin");
-                        fileWriter.closeWriteConnection();
-                        System.out.println(url + " has no origin");
-                    }
                     for (String e : evidenceSet) {
                         if (e.length() != 0) {
                             String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
@@ -61,26 +60,30 @@ public class SnopesExtractorThread{
                         }
                     }
 
-                    HashSet<String> originalDocumentLinkSet = claimEvidenceExtractor.getOriginalDocumentLinkSet();
-                    if (originalDocumentLinkSet.size() > 0) {
-                        for (String link : originalDocumentLinkSet) {
-                            if (link.length()!= 0) {
-                                String[] linkInfo = {url, link};
-                                updateCsvFile(linkInfo,Constants.ORIGIN_LINK_CORPUS);
-                            }
+                    
+                } else {
+                    String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
+                        description, source, claim, truthfulness, "", origin};
+                    updateCsvFile(infos,Constants.CLAIM_EVIDENCE_CORPUS);
+                    fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
+                    fileWriter.writeLine(url+" has no evidence, write empty evidence");
+                    fileWriter.closeWriteConnection();
+                    System.out.println(url + " has no evidence! , write empty evidence");
+                }
+                HashSet<String> originalDocumentLinkSet = claimEvidenceExtractor.getOriginalDocumentLinkSet();
+                if (originalDocumentLinkSet.size() > 0) {
+                    for (String link : originalDocumentLinkSet) {
+                        if (link.length()!= 0) {
+                            String[] linkInfo = {url, link};
+                            updateCsvFile(linkInfo,Constants.ORIGIN_LINK_CORPUS);
                         }
-
-                    } else {
-                        fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
-                        fileWriter.writeLine(url+" has no links");
-                        fileWriter.closeWriteConnection();
-                        System.out.println(url + " has no links!");
                     }
+
                 } else {
                     fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
-                    fileWriter.writeLine(url+" has no evidence");
+                    fileWriter.writeLine(url+" has no links");
                     fileWriter.closeWriteConnection();
-                    System.out.println(url + " has no evidence!");
+                    System.out.println(url + " has no links!");
                 }
             } else {
                 fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
