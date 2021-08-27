@@ -57,7 +57,7 @@ public class App{
             globalUrlsCheckInCrawl(filePath,running_dir);
             claimEvideceExtractorWithCrawl(running_dir);
             deleteDownloads(running_dir);
-            claimEvideceExtractorOnSnopes(Constants.NOT_FOUND_URLS,running_dir);
+            claimEvideceExtractorOnSnopes(Constants.NOT_FOUND_URLS,running_dir);//TODO need modify annotatingLabel and predict.py since we have empty evidence
         }
 
         if (args[0].equals("mode1") || args[0].equals("mode2")){

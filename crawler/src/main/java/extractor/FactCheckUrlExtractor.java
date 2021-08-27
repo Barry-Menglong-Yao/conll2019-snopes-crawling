@@ -26,7 +26,7 @@ public class FactCheckUrlExtractor extends WebCrawler {
 
     public FactCheckUrlExtractor() {
         String running_dir="";//TODO 
-            myFileWriter = new MyFileWriter(running_dir);
+        myFileWriter = new MyFileWriter(running_dir);
     }
 
     /**

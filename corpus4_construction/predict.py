@@ -79,15 +79,15 @@ def predict_pipeline(new_corpuspath):
     new_datapath = path.dirname(path.dirname(path.abspath(__file__)))+"/corpus4_construction/"+new_corpuspath
     new_snopes_url_list,new_url_claim_map,new_snopes_evidence_data,new_original_document_data = read_new_corpus(new_datapath)
 
-    snopes_evidence_dict = dict()
-    original_document_dict = dict()
-    snopes_rating_dict = dict()
+    # snopes_evidence_dict = dict()
+    # original_document_dict = dict()
+    # snopes_rating_dict = dict()
 
-    for i,data in enumerate(new_snopes_evidence_data):
-        snopes_evidence_dict[data[0]] = data[2]
-        snopes_rating_dict[data[0]] = data[4]
-    for i,data in enumerate(new_original_document_data):
-        original_document_dict[data[0]] = data[2]
+    # for i,data in enumerate(new_snopes_evidence_data):
+    #     snopes_evidence_dict[data[0]] = data[2]
+    #     snopes_rating_dict[data[0]] = data[4]
+    # for i,data in enumerate(new_original_document_data):
+    #     original_document_dict[data[0]] = data[3]
 
     # construct the array to predict
     predict_data = []
