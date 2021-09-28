@@ -5,12 +5,18 @@ import webbrowser
 
 
 
+
 def main():
-    data_path="out/example/"
+    data_path="../final_corpus/mode3_latest/"
+    out_path="out/example/"
     example_dict=read_example(data_path)
+    for i in range(10):
+        create_one_html(10,i,example_dict,out_path)
     
 
-    doc = dominate.document(title='examples')
+
+def create_one_html(example_num_in_one_html,html_index,example_dict,data_path):
+    doc = dominate.document(title='examples'+str(html_index))
     with doc.head:
         link(rel='stylesheet', href='style.css')
         script(type='text/javascript', src='script.js')
@@ -18,7 +24,9 @@ def main():
     with doc:
         with div() as body:
             attr(cls='body')
-            for _,example in example_dict.items():
+            for j in range(example_num_in_one_html):
+                example=example_dict[html_index*10+j]
+            # for _,example in example_dict.items():
                 body.add(h1(f"claim id:{example.claim_id}"))
         
                 body.add(h2(a("snopes_url",href=example.snopes_url)))
@@ -49,11 +57,12 @@ def main():
                 body.add(hr())
 
 
-    print(doc)
-    html_name=data_path+'img.html'
+    # print(doc)
+    html_name=data_path+'example'+str(html_index)+'.html'
     with open(html_name, 'w') as f:
         print(doc,file=f)
     webbrowser.open(html_name) 
+
 
 def test():
     doc = dominate.document(title='examples')
