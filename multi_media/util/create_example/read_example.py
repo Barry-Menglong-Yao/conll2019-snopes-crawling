@@ -33,7 +33,7 @@ def read_example(data_path):
 
     img_list=os.listdir(image_corpus)
     for img_name in img_list:
-        prefix=img_name[:13]
+        prefix=img_name[:14]
         ids=prefix.split("-")
         claim_id= int(ids[0]) 
         evidence_id=ids[1]

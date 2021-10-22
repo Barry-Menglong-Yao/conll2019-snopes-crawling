@@ -6,7 +6,15 @@ crawler/nohup.out
 crawler/target/
 crawler/src/test/
 corpus4_construction/newdata/
+final_corpus/mode1_old_backup
+final_corpus/mode3_latest_backup
+final_corpus/mode1_old_temp
+final_corpus/mode3_latest_temp
+final_corpus/mode1_old/images
+final_corpus/mode3_latest/images
 final_corpus/
+*.tar.gz
+
 
 *.pyc
 crawler/.settings/org.eclipse.m2e.core.prefs
@@ -35,3 +43,4 @@ corpus4_construction/test/Corpus4.csv
 corpus4_construction/snopes_ml/utils/__pycache__/data_helpers.cpython-36.pyc
 corpus4_construction/snopes_ml/utils/__pycache__/feature_engineering.cpython-36.pyc
 corpus4_construction/snopes_ml/utils/__pycache__/data_helpers.cpython-36.pyc
+final_corpus/mode1_old/Corpus3.csv

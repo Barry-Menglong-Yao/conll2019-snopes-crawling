@@ -59,23 +59,58 @@ def generate_id_for_corpus2():
     df.to_csv(out_corpus,index=False)
 
 def generate_id_for_corpus3():
-    data_path="../final_corpus/mode1_old2/"
-    out_path ="../final_corpus/mode1_old/"
+    
+    data_path ="final_corpus/mode1_old/"
+    out_path="final_corpus/mode1_old_temp/"
     out_corpus=os.path.join(out_path,"Corpus3.csv")
     corpus=os.path.join(data_path,"Corpus3.csv")
-    df_link=read_link_corpus(out_path)
+    df_link=read_link_corpus(data_path)
 
     claim_id_list=[]
+    relevant_document_id_list=[]
     df = pd.read_csv(corpus ,encoding="utf8")  
     for i,row in df.iterrows():
         snopes_url=row["Snopes URL"]
         found=df_link.loc[df_link['Snopes URL'] ==snopes_url]
         if len(found)>0:
             claim_id=found.head(1)["claim_id"].values[0]  
+            relevant_document_id=found.head(1)["evidence_id"].values[0]  
         else:
             claim_id=-1
+            relevant_document_id=-1
         claim_id_list.append(claim_id)
+        relevant_document_id_list.append(relevant_document_id)
+    df.insert(1, "relevant_document_id",relevant_document_id_list )
     df.insert(0, "claim_id",claim_id_list )
     df.to_csv(out_corpus,index=False)
 
-generate_id_for_corpus3()
+def generate_relevant_document_id_for_corpus3(data_path):
+    out_path= data_path+"_temp"
+    out_corpus=os.path.join(out_path,"Corpus3.csv")
+    corpus=os.path.join(data_path,"Corpus3.csv")
+    df_link=read_link_corpus(data_path)
+
+    claim_id_list=[]
+    relevant_document_id_list=[]
+    df = pd.read_csv(corpus ,encoding="utf8")  
+    for i,row in df.iterrows():
+        relevant_document_url=row["Link URL"]
+        found=df_link.loc[df_link['Original Link URL'] ==relevant_document_url]
+        if len(found)>0:
+            claim_id=found.head(1)["claim_id"].values[0]  
+            relevant_document_id=found.head(1)["evidence_id"].values[0]  
+        else:
+            claim_id=-1
+            relevant_document_id=-1
+        claim_id_list.append(claim_id)
+        relevant_document_id_list.append(relevant_document_id)
+    df.insert(1, "relevant_document_id",relevant_document_id_list )
+    # df.insert(0, "claim_id",claim_id_list )
+    df.to_csv(out_corpus,index=False)
+
+
+
+
+data_path ="final_corpus/mode3_latest"
+generate_relevant_document_id_for_corpus3(data_path)
+ 

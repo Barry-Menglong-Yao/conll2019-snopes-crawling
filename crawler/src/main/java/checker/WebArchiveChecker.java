@@ -113,7 +113,7 @@ public class WebArchiveChecker extends AbstractChecker {
 //            writer.flush();
 //
 //        } catch (Exception e) {
-//            // TODO Auto-generated catch block
+//             
 //            e.printStackTrace();
 //        }
 //    }

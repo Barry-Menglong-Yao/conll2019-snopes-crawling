@@ -65,7 +65,7 @@ class Download():
         threshold=80
         if length>threshold:
             base_name=base_name[length-threshold:length]
-        saving_name= prefix+"-"+str(img_id)+"-"+base_name
+        saving_name= prefix+"-"+str(img_id).zfill(2)+"-"+base_name
         
         if not  re.search("\.[a-z][a-z][a-z]",  saving_name) and not  re.search("\.[a-z][a-z][a-z][a-z]", saving_name):
             saving_name+=".jpg"
