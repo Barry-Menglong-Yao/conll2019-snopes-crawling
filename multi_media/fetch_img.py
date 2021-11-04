@@ -22,7 +22,7 @@ def fetch_img(args):
     url_to_crawl=os.path.join(data_path,ORIGIN_LINK_CORPUS)
     out_dir=args.out_dir
     is_direct_dir=True
-
+    resume_claim_id=0 
 
     df_evidence = pd.read_csv(url_to_crawl ,encoding="utf8" )
     domain_dict={}
@@ -35,16 +35,17 @@ def fetch_img(args):
         origin_doc_url=row["Original Link URL"]
         snope_id=row["claim_id"]
         relevant_document_id=row["evidence_id"]
-        if snope_url!=cur_snope_url:
-            cur_snope_url=snope_url
+        if snope_id>=resume_claim_id:  
+            if snope_url!=cur_snope_url:
+                cur_snope_url=snope_url
+                try:
+                    fetch_img_by_newspaper(snope_url, snope_id,"proof",run_dir)
+                except Exception as e:
+                    print(e)
             try:
-                fetch_img_by_newspaper(snope_url, snope_id,"proof",run_dir)
+                fetch_img_by_newspaper(origin_doc_url, snope_id,relevant_document_id,run_dir)
             except Exception as e:
                 print(e)
-        try:
-            fetch_img_by_newspaper(origin_doc_url, snope_id,relevant_document_id,run_dir)
-        except Exception as e:
-            print(e)
 
 def gen_run_dir(out_dir,is_direct_dir):
     if is_direct_dir:

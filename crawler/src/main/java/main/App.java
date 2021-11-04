@@ -317,7 +317,7 @@ public class App{
         File logFile = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
         if (logFile.exists()){
             ArrayList<String> crawledLines = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.ALL_LINKS_LOGGER);
-            //TODO lines = removeCrawledLines(lines,crawledLines);
+            lines = removeCrawledLines(lines,crawledLines);
         }
 
         System.out.println(lines.size());

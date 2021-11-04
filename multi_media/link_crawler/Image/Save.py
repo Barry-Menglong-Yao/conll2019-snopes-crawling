@@ -4,8 +4,8 @@ import re
 import os
 from PIL import Image
 import socket
-thresholdWidth=256
-thresholdHeight=256
+thresholdWidth=512
+thresholdHeight=512
 timeout = 20
 import time
 socket.setdefaulttimeout(timeout)
@@ -64,7 +64,7 @@ def filter_by_size(full_file_path):
             raise e1
              
     width, height = image.size
-    if (width <= thresholdWidth and
+    if (width <= thresholdWidth or
             height <= thresholdHeight):
         os.remove(filename)
 

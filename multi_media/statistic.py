@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from urllib.parse import urlparse
 import sys
-data_path="crawler/Results"
+
 def relevant_docs_statistic():
     ORIGIN_LINK_CORPUS="LinkCorpus.csv"
     data_path="crawler/Results"
@@ -28,7 +28,11 @@ def show_result(domain_dict):
     with open("out/statistic.txt","w") as file:
         for key,value in sorted_domain_dict :
             print(f"{key}, {value}",file=file)
-    
+
+
+
+
+data_path="crawler/Results"    
 def gen_top_domain_list(n):
     top_domain_list=[]
     file_name=os.path.join( "out", "statistic.txt") 
@@ -95,5 +99,5 @@ def fetch_domain(origin_doc_url):
 
 
 if __name__ == '__main__':
-    evidence_from_top()
-    # relevant_docs_statistic()
+    # evidence_from_top()
+    relevant_docs_statistic()
