@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -25,7 +26,9 @@ public class FactCheckUrlExtractor extends WebCrawler {
     private MyFileWriter myFileWriter;
 
     public FactCheckUrlExtractor() {
-        String running_dir="";//TODO 
+ 
+   
+        String running_dir="Results/run1/";//TODO  use Thread variable
         myFileWriter = new MyFileWriter(running_dir);
     }
 
@@ -47,10 +50,12 @@ public class FactCheckUrlExtractor extends WebCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url) {
         String categoryUrl = url.getURL();
         // Check if the URL is a valid fact check URL
-        if (Pattern.matches(Constants.SNOPES_FACT_CHECK_PATTERN, categoryUrl)) {
+        // if (Pattern.matches(Constants.SNOPES_FACT_CHECK_PATTERN, categoryUrl)) {TODO
+        if (Pattern.matches(Constants.POLITIFACT_FACT_CHECK_PATTERN, categoryUrl)) {
 //            myFileWriter.openWriteConnection("accessd.txt");
 //            myFileWriter.writeLine(categoryUrl);
 //            myFileWriter.closeWriteConnection();
+            logger.info( "visit {}",categoryUrl);
             return true;
         }
         return false;
@@ -75,7 +80,12 @@ public class FactCheckUrlExtractor extends WebCrawler {
             myFileWriter.openWriteConnection(Constants.SNOPES_URLS_CORPUS);
             for (int i = 0; i < factCheckUrls.size(); i++) {
 //                if (factCheckUrls.get(i).select("a").attr("href").contains(Constants.SNOPES_FACT_CHECK))
-                    myFileWriter.writeLine(factCheckUrls.get(i).select("a").attr("href"));
+                try{
+                    myFileWriter.writeLine(factCheckUrls.get(i).select("div[class*=m-statement__quote]").select("a").attr("href"));
+                }    catch(Exception e){
+                    System.out.print(" "+e);
+                }
+                
 
             }
             myFileWriter.closeWriteConnection();

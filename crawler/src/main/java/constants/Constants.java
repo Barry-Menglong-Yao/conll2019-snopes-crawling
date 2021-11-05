@@ -23,12 +23,15 @@ public class Constants {
         public static final String ANNOTATED_CLAIM_EVIDENCE_HEADERS= "Snopes URL,Commoncrawl URL,Offset,Length,Category,SubCategory,Headline,Description,Source,Claim,Truthfulness,Evidence,Origin,Snippets,Stance,Evidence_Sentences";
 
         public static final String AMAZON_FILE_SERVER = "https://commoncrawl.s3.amazonaws.com/";
-        public static final String SNOPES_FACT_CHECK_PATTERN = ".+(fact-check)/.*";///page
+        public static final String SNOPES_FACT_CHECK_PATTERN =  ".+(fact-check/page)/.*";///page 
         public static final String SNOPES_CATEGORY_PATTERN = ".+(fact-check/category)/.*";
         public static final String SNOPES_FACTCHECK_WEBSITE = "https://www.snopes.com/fact-check/"; // Snopes website
         public static final String SNOPES_WEBSITE="https://www.snopes.com/";
         public static final String SNOPES_FACT_CHECK="fact-check";
 
+
+        public static final String POLITIFACT_FACTCHECK_WEBSITE = "https://www.politifact.com/factchecks/"; 
+        public static final String POLITIFACT_FACT_CHECK_PATTERN =  ".*factchecks/.page.*";///page 
 
         //files to store urlschecker results
         public static final String NOT_FOUND_URLS = "NotFoundURLs.txt";

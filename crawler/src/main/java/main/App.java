@@ -32,8 +32,15 @@ import org.slf4j.LoggerFactory;
 
 public class App{
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    public String running_dir;
+    public App(String running_dir){
+        this.running_dir=running_dir;
+    }
+
     public static void main(String[] args) throws Exception{
-        App app = new App();
+        String running_dir=args[1];
+        App app = new App(running_dir);
          
         app.start(args );
 
@@ -50,7 +57,7 @@ public class App{
 
         if (args.length>0 && args[0].equals("mode3")){
             
-            urlCorpusConstruct(running_dir);
+            urlCorpusConstruct();
             claimEvideceExtractorOnSnopes(Constants.UNIQUE_URLS_CORPUS,running_dir);
         }else{
             String filePath = Constants.INITIAL_DATA+Constants.SNOPES_URLS;
@@ -92,7 +99,7 @@ public class App{
     /**
      * Crawler4j crawl latest fact-checking urls on the Snopes, filter out repeated urls.
      */
-    private void urlCorpusConstruct(String running_dir){
+    private void urlCorpusConstruct(){
         File f2 = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.UNIQUE_URLS_CORPUS);
         if(f2.exists()){
             System.out.println("Corpus1.txt has been done, start extracting!");
@@ -101,7 +108,8 @@ public class App{
         logger.info("urlCorpusConstruct start");
         CrawlController factCheckUrlController = factCheckUrlCrawlConfig(running_dir);
         if(factCheckUrlController!=null){
-            factCheckUrlController.addSeed(Constants.SNOPES_FACTCHECK_WEBSITE);
+            // factCheckUrlController.addSeed(Constants.SNOPES_FACTCHECK_WEBSITE);
+            factCheckUrlController.addSeed(Constants.POLITIFACT_FACTCHECK_WEBSITE);//TODO 
             factCheckUrlController.startNonBlocking(FactCheckUrlExtractor.class,40);
 
             if (factCheckUrlController !=null){

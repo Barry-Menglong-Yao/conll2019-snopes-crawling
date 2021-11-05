@@ -12,16 +12,41 @@ import java.util.regex.Matcher;
 
 public class test {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+
+//        String evidence = evidenceSplitting(a);
+//        System.out.println(evidence);
+        test2();
+    }
+
+    public static void test2() throws Exception{
+        String running_dir="Results/run1/";
+        App app = new App(running_dir);
+        String[] args=new String[]{"mode3",running_dir};
+        app.start(args );
+
+    }
+
+    public static void test3(){
+ 
+        Pattern pattern = Pattern.compile(".*factchecks/.page.*" );
+        // Pattern pattern = Pattern.compile("w3schools", Pattern.CASE_INSENSITIVE );
+        Matcher matcher = pattern.matcher("https://www.politifact.com/factchecks/?page=5&");
+        boolean matchFound = matcher.find();
+        if(matchFound) {
+        System.out.println("Match found");
+        } else {
+        System.out.println("Match not found");
+        }
+    }
+
+    public static void test1(){
         String a = "<p>Just because the test helped this man get a positive cancer diagnosis doesn't mean it's a reliable tool everyone should use, according to the American Cancer Society.The organization put the question to Ted Gansler, director of medical content, who wrote that 'only a small minority of men' with testicular cancer have HCG levels high enough to be detected by a home pregnancy test.He added that 'several non-cancerous conditions can cause false positive results.'</p> <p>According to Gansler, 'current evidence does not indicate that screening the general population of men with a urine test for HCG (or with urine or blood tests for any other tumour marker) can find testicular cancer early enough to reduce testicular cancer death rates.'</p> <p>One thing men can do is be on the lookout for lumps in the testicles and see your doctor if you find one. Testicle pain or swelling and heaviness or aching in the lower abdomen are also possible signs of testicular cancer.</p>";
         Matcher m = Pattern.compile("\\.[A-Z]").matcher(a);
         while (m.find()){
             a = a.replace(m.group(),". "+m.group().substring(1,2));
         }
         System.out.println(a);
-//        String evidence = evidenceSplitting(a);
-//        System.out.println(evidence);
-
     }
 
     public static String evidenceSplitting(String evidence){
