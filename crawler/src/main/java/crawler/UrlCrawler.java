@@ -25,10 +25,12 @@ import utils.MyFileWriter;
 public class UrlCrawler {
     private Logger logger = LoggerFactory.getLogger(getClass());
     public Source source;
+    public int max_pages_to_fetch;
     public String running_dir;
-    public UrlCrawler(String running_dir,Source source ){
+    public UrlCrawler(String running_dir,Source source,int max_pages_to_fetch ){
         this.running_dir=running_dir;
         this.source=source;
+        this.max_pages_to_fetch=max_pages_to_fetch;
     }
     /**
      * Crawler4j crawl latest fact-checking urls on the Snopes, filter out repeated urls.
@@ -40,7 +42,7 @@ public class UrlCrawler {
             return;
         }
         logger.info("urlCorpusConstruct start");
-        CrawlController factCheckUrlController = factCheckUrlCrawlConfig(running_dir);
+        CrawlController factCheckUrlController = factCheckUrlCrawlConfig(running_dir,max_pages_to_fetch);
         if(factCheckUrlController!=null){
             // factCheckUrlController.addSeed(Constants.SNOPES_FACTCHECK_WEBSITE);
             factCheckUrlController.addSeed(this.source.seed_url);
@@ -74,11 +76,11 @@ public class UrlCrawler {
      *
      * @return An instance of the crawl controller
      */
-    private CrawlController factCheckUrlCrawlConfig(String running_dir) {
+    private CrawlController factCheckUrlCrawlConfig(String running_dir,int max_pages_to_fetch) {
         // Specify the configurations required to perform web crawl
         CrawlConfig oCrawlConfig = new CrawlConfig();
         oCrawlConfig.setCrawlStorageFolder(running_dir+Constants.RESULT_STORAGE_DIRECTORY);
-
+        oCrawlConfig.setMaxPagesToFetch( max_pages_to_fetch);
         // Initialize the controller that manages the crawling session
         PageFetcher oPageFetcher = new PageFetcher(oCrawlConfig);
         RobotstxtConfig oRobotstxtConfig = new RobotstxtConfig();

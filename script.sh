@@ -36,7 +36,7 @@ then
 	mv corpus4_construction/newdata/Corpus4.csv final_corpus/
 elif [ "$1" = "mode3" ]
 then
-    #generate addtionally corpus for document retrievval
+    #generate addtionally corpus for document retrieval
 	echo "Construct the Snopes corpus for recent news!"
 	cd crawler
 	

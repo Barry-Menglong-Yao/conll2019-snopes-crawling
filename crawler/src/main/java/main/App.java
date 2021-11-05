@@ -24,6 +24,7 @@ import checker.CheckerThread4Links;
 import checker.CheckerThread4Urls;
 import checker.WebArchiveChecker;
 import checker.WebChecker;
+import constants.Args;
 import constants.Constants;
 import crawler.UrlCrawler;
 import edu.stanford.nlp.ling.HasWord;
@@ -46,18 +47,28 @@ public class App{
     private Logger logger = LoggerFactory.getLogger(getClass());
     public Source source;
     public String running_dir;
-    public App(String running_dir,String source_enum_str){
+    public int max_pages_to_fetch;
+    public App(String running_dir,String source_enum_str,int max_pages_to_fetch){
         this.running_dir=running_dir;
         this.source=Source.get_source(source_enum_str);
+        this.max_pages_to_fetch=max_pages_to_fetch;
     }
 
     public static void main(String[] args) throws Exception{
-        String running_dir=args[1];
         String mode=args[0];
-        String source_enum_str=args[2];
+        String running_dir=Args.running_dir;
+        String source_enum_str=Args.source_str;//Politifact
+        int max_pages_to_fetch=1000;
+        if( args.length>1){
+             running_dir=args[1];
+            
+             source_enum_str=args[2];
+        }
+  
+            
         
         
-        App app = new App(running_dir,source_enum_str);
+        App app = new App(running_dir,source_enum_str,max_pages_to_fetch);
         
         app.start(mode );
 
@@ -110,7 +121,7 @@ public class App{
         }
     }
     private void urlCorpusConstruct(){
-        UrlCrawler urlCrawler=new UrlCrawler(running_dir, source);
+        UrlCrawler urlCrawler=new UrlCrawler(running_dir, source,max_pages_to_fetch);
         urlCrawler.urlCorpusConstruct();
     }
     
