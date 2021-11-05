@@ -29,9 +29,7 @@ public class Constants {
         public static final String SNOPES_WEBSITE="https://www.snopes.com/";
         public static final String SNOPES_FACT_CHECK="fact-check";
 
-
-        public static final String POLITIFACT_FACTCHECK_WEBSITE = "https://www.politifact.com/factchecks/"; 
-        public static final String POLITIFACT_FACT_CHECK_PATTERN =  ".*factchecks/.page.*";///page 
+ 
 
         //files to store urlschecker results
         public static final String NOT_FOUND_URLS = "NotFoundURLs.txt";

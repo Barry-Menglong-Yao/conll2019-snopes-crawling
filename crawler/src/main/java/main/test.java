@@ -8,6 +8,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import constants.Args;
+
 import java.util.regex.Matcher;
 
 public class test {
@@ -20,10 +23,12 @@ public class test {
     }
 
     public static void test2() throws Exception{
-        String running_dir="Results/run1/";
-        App app = new App(running_dir);
-        String[] args=new String[]{"mode3",running_dir};
-        app.start(args );
+        
+        String running_dir=Args.running_dir;
+        App app = new App(running_dir,Args.source_str);
+         
+        String mode="mode3";
+        app.start(mode );
 
     }
 

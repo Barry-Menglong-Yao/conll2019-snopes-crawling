@@ -1,61 +1,75 @@
 package main;
 
-import au.com.bytecode.opencsv.CSVReader;
-import checker.*;
-import constants.Constants;
-import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.crawler.CrawlController;
-import edu.uci.ics.crawler4j.fetcher.PageFetcher;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
-import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-import extractor.ClaimEvidenceExtractorThread;
-import extractor.FactCheckUrlExtractor;
-import extractor.SnopesExtractorThread;
-import org.apache.commons.io.FileUtils;
-import utils.AccessURL;
-import utils.MyCsvFileWriter;
-import utils.MyFileReader;
-import utils.MyFileWriter;
-
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
-import edu.stanford.nlp.process.DocumentPreprocessor;
-import edu.stanford.nlp.ling.HasWord;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class App{
-    private Logger logger = LoggerFactory.getLogger(getClass());
+import au.com.bytecode.opencsv.CSVReader;
+import checker.CCChecker4Urls;
+import checker.Checker;
+import checker.CheckerThread4Links;
+import checker.CheckerThread4Urls;
+import checker.WebArchiveChecker;
+import checker.WebChecker;
+import constants.Constants;
+import crawler.UrlCrawler;
+import edu.stanford.nlp.ling.HasWord;
+import edu.stanford.nlp.process.DocumentPreprocessor;
+import extractor.ClaimEvidenceExtractorThread;
+import extractor.SnopesExtractorThread;
+import source.Source;
+import utils.AccessURL;
+import utils.FileUtil;
+import utils.MyCsvFileWriter;
+import utils.MyFileWriter;
 
+
+
+
+public class App{
+     
+
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    public Source source;
     public String running_dir;
-    public App(String running_dir){
+    public App(String running_dir,String source_enum_str){
         this.running_dir=running_dir;
+        this.source=Source.get_source(source_enum_str);
     }
 
     public static void main(String[] args) throws Exception{
         String running_dir=args[1];
-        App app = new App(running_dir);
-         
-        app.start(args );
+        String mode=args[0];
+        String source_enum_str=args[2];
+        
+        
+        App app = new App(running_dir,source_enum_str);
+        
+        app.start(mode );
 
     }
 
-    public void start(String[] args ) throws Exception{
+    public void start(String mode) throws Exception{
 
         long startTime = System.nanoTime();
-        String running_dir="";
-        if (args.length>1){
-            running_dir=args[1];
-        }
+ 
         
 
-        if (args.length>0 && args[0].equals("mode3")){
+        if (  mode.equals("mode3")){
             
             urlCorpusConstruct();
             claimEvideceExtractorOnSnopes(Constants.UNIQUE_URLS_CORPUS,running_dir);
@@ -67,11 +81,11 @@ public class App{
             claimEvideceExtractorOnSnopes(Constants.NOT_FOUND_URLS,running_dir);//TODO need modify annotatingLabel and predict.py since we have empty evidence
         }
 
-        if (args[0].equals("mode1") || args[0].equals("mode2")){
+        if (mode.equals("mode1") || mode.equals("mode2")){
             annotatingLabel(  running_dir);
         }
 
-        if (args[0].equals("mode1") || args[0].equals("mode3")){
+        if (mode.equals("mode1") || mode.equals("mode3")){
             localLinksCheckInArchive(  running_dir);
             localLinksExtractorInWeb(running_dir);
             snopesLinksHandler(running_dir);
@@ -95,44 +109,11 @@ public class App{
             System.out.println("Download Files directory doesn't exist. "+e );
         }
     }
-
-    /**
-     * Crawler4j crawl latest fact-checking urls on the Snopes, filter out repeated urls.
-     */
     private void urlCorpusConstruct(){
-        File f2 = new File(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.UNIQUE_URLS_CORPUS);
-        if(f2.exists()){
-            System.out.println("Corpus1.txt has been done, start extracting!");
-            return;
-        }
-        logger.info("urlCorpusConstruct start");
-        CrawlController factCheckUrlController = factCheckUrlCrawlConfig(running_dir);
-        if(factCheckUrlController!=null){
-            // factCheckUrlController.addSeed(Constants.SNOPES_FACTCHECK_WEBSITE);
-            factCheckUrlController.addSeed(Constants.POLITIFACT_FACTCHECK_WEBSITE);//TODO 
-            factCheckUrlController.startNonBlocking(FactCheckUrlExtractor.class,40);
-
-            if (factCheckUrlController !=null){
-                factCheckUrlController.waitUntilFinish();
-            }
-
-        }
-        String snopesURLCorpus=running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_URLS_CORPUS;
-        ArrayList<String> snopesUrls = readUlrs(snopesURLCorpus);
-        Set<String> uniqueUrls = new HashSet<String>();
-        for (String url : snopesUrls){
-            uniqueUrls.add(url);
-        }
-
-        MyFileWriter myFileWriter = new MyFileWriter(running_dir);
-        for (String url : uniqueUrls){
-            myFileWriter.openWriteConnection(Constants.UNIQUE_URLS_CORPUS);
-            myFileWriter.writeLine(url);
-            myFileWriter.closeWriteConnection();
-        }
-
-        logger.info("urlCorpusConstruct end");
+        UrlCrawler urlCrawler=new UrlCrawler(running_dir, source);
+        urlCrawler.urlCorpusConstruct();
     }
+    
 
     /**
      * read the snopes ulr from local file and check if they are crawled by common crawl
@@ -586,45 +567,12 @@ public class App{
      * @return
      */
     private ArrayList<String> readUlrs(String filePath){
-        MyFileReader myFileReader = new MyFileReader();
-        myFileReader.openReadConnection(filePath);
-        String line;
-        if (filePath.endsWith(".csv")){
-            line = myFileReader.readLine();
-        }
-        ArrayList<String> urls = new ArrayList<String>();
-        while ((line=myFileReader.readLine())!=null){
-            urls.add(line);
-        }
-        return urls;
+        return FileUtil.readUlrs(filePath);
     }
 
 
 
-    /**
-     * This function initializes a controller for crawling snopes web pages to
-     * fetch the list of all fact check URLs
-     *
-     * @return An instance of the crawl controller
-     */
-    private CrawlController factCheckUrlCrawlConfig(String running_dir) {
-        // Specify the configurations required to perform web crawl
-        CrawlConfig oCrawlConfig = new CrawlConfig();
-        oCrawlConfig.setCrawlStorageFolder(running_dir+Constants.RESULT_STORAGE_DIRECTORY);
-
-        // Initialize the controller that manages the crawling session
-        PageFetcher oPageFetcher = new PageFetcher(oCrawlConfig);
-        RobotstxtConfig oRobotstxtConfig = new RobotstxtConfig();
-        RobotstxtServer oRobotstxtServer = new RobotstxtServer(oRobotstxtConfig, oPageFetcher);
-        CrawlController oCrawlController = null;
-        try {
-            oCrawlController = new CrawlController(oCrawlConfig, oPageFetcher, oRobotstxtServer);
-        } catch (Exception e) {
-            System.err.println("Unable to initialize the fact check crawler controller");
-            e.printStackTrace();
-        }
-        return oCrawlController;
-    }
+    
 
     private void updateCorpus(String filename,String[] content,String running_dir){
         MyCsvFileWriter myCsvFileWriter = new MyCsvFileWriter();

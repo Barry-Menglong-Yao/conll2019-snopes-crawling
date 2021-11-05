@@ -2,25 +2,23 @@ package extractor;
 
 import java.util.HashSet;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 
-import utils.MyFileWriter;
-import utils.Utils;
-
-/**
- * This class is implemented the parsing rules for retrieve useful information on the Snopes fact-check pages.
+/**  
+ * This class is implemented the parsing rules for retrieve useful information on the Politifact  fact-check pages.
  * Each function retrieve one kind of information.
  * The results can retrieve with all the get fucntions.
  */
 
-public class ClaimEvidenceExtractor {
+public class PolitifactClaimEvidenceExtractor extends ClaimEvidenceExtractor {
     private String url;
-    private String htmlContent;
+    private Document doc;
+    private String serverURL;
+    private long offset;
+    private int length;
+
     private String claim="";
     private String category;
     private String subCategory;
@@ -31,42 +29,22 @@ public class ClaimEvidenceExtractor {
     private String source;
     private HashSet<String> evidenceSet = new HashSet<String>();
     private String origin;
-    private Utils dkProUtils;
     private String pageType="New";
-    private String serverURL;
-    private long offset;
-    private int length;
-    private MyFileWriter fileWriter;
-    private Document doc;
+
+ 
+    
 
 
-    public ClaimEvidenceExtractor(String htmlContent,String url,String serverURL,long offset,int length,String running_dir){
-        this.htmlContent = htmlContent;
+    public PolitifactClaimEvidenceExtractor(String htmlContent,String url,String serverURL,long offset,int length,String running_dir){
+         
         this.url = url;
-        this.dkProUtils = new Utils();
         this.serverURL = serverURL;
         this.offset = offset;
         this.length = length;
-        this.fileWriter = new MyFileWriter(running_dir);
         doc = text2Document(htmlContent);
     }
-
-    /**
-     * convert the HTML content into a Jsoup document
-     * @param htmlContent
-     */
-    public ClaimEvidenceExtractor(String htmlContent){
-        this.htmlContent = htmlContent;
-        doc = text2Document(htmlContent);
-    }
-
-    public ClaimEvidenceExtractor(){}
-
-    public Document text2Document(String text){
-        Document doc = Jsoup.parse(text);
-        return doc;
-    }
-
+ 
+ 
 
     private String categoryExtractor(Document doc){
         Elements mainArticle =  doc.select("article");
@@ -426,6 +404,7 @@ public class ClaimEvidenceExtractor {
         }
         return articleBody;
     }
+    
     private String originExtactor(Document doc){
         String sOrigin = "";
         Elements articleBody = getArticleBody( doc);
@@ -550,109 +529,7 @@ public class ClaimEvidenceExtractor {
     }
 
 
-    /**
-     * This function is responsible to normalize the sting by removing the HTML
-     * tags.
-     *
-     * @param text
-     *            String that has to be normalized.
-     * @param tag
-     *            Boolean value. 'true' indicates that all the HTML tags except
-     *            paragraph tags are removed, else all the tags are removed.
-     * @param allTag
-     *            Boolean value. 'true' indicates that all the HTML tags except
-     *            paragraph and the blockquotes are removed, else all the tags
-     *            are removed.
-     * @return normalized string
-     */
-    protected String stringNormalize(String text, boolean tag, boolean allTag) {
-        // Remove all anchor and img tags
-        Whitelist whitelist;
-        if (allTag) {
-            if (pageType.equals("New")) {
-                whitelist = new Whitelist().addTags("p", "blockquote");
-                text = Jsoup.clean(text, whitelist);
-            } else if (pageType.equals("Old")) {
-                whitelist = new Whitelist().addTags("p");
-                whitelist = whitelist.addAttributes("div", "class");
-                text = Jsoup.clean(text, whitelist);
-            }
-        } else if (tag) {
-            whitelist = new Whitelist().addTags("p");
-            text = Jsoup.clean(text, whitelist);
-            text = text.replaceAll("<p></p>", "");
-            text = text.replaceAll("<p>&nbsp;*</p>", "");
-            text = text.replaceAll("<p>\\s*</p>", "");
-            if (!text.startsWith("<p>")) {
-                text = text.replaceFirst("<p>", "</p> <p>");
-                text = "<p>" + text;
-            }
-            if (!text.endsWith("</p>")) {
-                String toReplace = "</p>";
-                int pos = text.lastIndexOf(toReplace);
-                if (pos > -1) {
-                    text = text.substring(0, pos) + "</p> <p>"
-                            + text.substring(pos + toReplace.length(), text.length());
-                }
-                text = text + "</p>";
-            }
-        } else {
-            text = Jsoup.clean(text, Whitelist.none());
-        }
-
-        // Replace space and extra para tags if present
-        text = text.replaceAll("&nbsp;", " ");
-        text = text.replaceAll("<p></p>", "");
-        text = text.replaceAll("<p>\\s*</p>", "");
-//        text = text.replaceAll("\n","");
-
-        // Remove unwanted texts
-        text = text.replaceAll("\\{.*\\}", "");
-        text = text.replaceAll("<p></p>", "");
-        text = text.replaceAll("<p>\\s*</p>", "");
-        text = text.replaceAll("<p>\\s*<p>", "<p>");
-        text = text.replaceAll("</p>\\s*</p>", "</p>");
-
-        text = dkProUtils.normalizeBreaks(text);
-        text = dkProUtils.normalize(text);
-
-        text = StringEscapeUtils.unescapeHtml(text);
-        text = text.replaceAll("&gt;", ">");
-        text = text.replaceAll("&lt;", "<");
-        text = text.replaceAll("&amp;", "&");
-
-        // Replace all double quotes quotes
-        text = replaceQuotation(text);
-
-        // Replace new line character with space
-        text = text.replaceAll("\n", " ");
-        text = text.replaceAll("\r", " ");
-
-        return text;
-    }
-
-
-    /**
-     * This function is responsible to replace the quotation with right and left
-     * quotations.
-     *
-     * @param data
-     *            The string in which the quotation has to be replaced.
-     * @return The modified string
-     */
-    protected String replaceQuotation(String data) {
-        String newData = data;
-        int count = 2;
-        while (newData.indexOf("\"") > -1) {
-            if ((count % 2) == 0) {
-                newData = newData.replaceFirst("\"", "'");
-            } else {
-                newData = newData.replaceFirst("\"", "'");
-            }
-            count++;
-        }
-        return newData;
-    }
+    
 
 
     public String getUrl() {
