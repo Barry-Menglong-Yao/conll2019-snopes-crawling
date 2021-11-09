@@ -93,6 +93,67 @@ def in_top(relevant_doc_url,top_domain_list):
     else:
         return False
 
+
+def statistic1():
+    data_path="crawler/crawler/Results/run005_snopes_10k/Results"
+    ORIGIN_LINK_CORPUS="Corpus2.csv"
+    
+    df_evidence = pd.read_csv(os.path.join(data_path,ORIGIN_LINK_CORPUS) ,encoding="utf8")
+    
+    cur_snope_url=""
+    snope_url_dict={}
+    count=0
+    
+    for _,row in df_evidence.iterrows():
+        snope_url=row[0]
+        origin_doc_url=row[1]
+        
+        if snope_url !=cur_snope_url:
+            count+=1
+            cur_snope_url=snope_url
+            snope_url_dict[snope_url]=1
+        else:
+            snope_url_dict[snope_url]+=1
+    
+    # print(snope_url_dict)
+    print(count)
+    
+    num_dict={}
+    for key,value in snope_url_dict.items():
+        if value   in num_dict.keys():
+            num_dict[value]+=1
+        else:
+            num_dict[value]=1
+    print(num_dict)
+
+
+
+def statistic2():
+    data_path="crawler/crawler/Results/run005_snopes_10k/Results"
+    ORIGIN_LINK_CORPUS="Corpus3.csv"
+    
+    df_evidence = pd.read_csv(os.path.join(data_path,ORIGIN_LINK_CORPUS) ,encoding="utf8")
+    
+    cur_snope_url=""
+    snope_url_dict={}
+    count=0
+    
+    for _,row in df_evidence.iterrows():
+        snope_url=row[0]
+        origin_doc_url=row[1]
+        
+        if snope_url !=cur_snope_url:
+            count+=1
+            cur_snope_url=snope_url
+            snope_url_dict[snope_url]=1
+        else:
+            snope_url_dict[snope_url]+=1
+    
+    # print(snope_url_dict)
+    print(count)
+     
+
+
 def fetch_domain(origin_doc_url):
     domain = urlparse(origin_doc_url).netloc
     return domain
@@ -100,4 +161,5 @@ def fetch_domain(origin_doc_url):
 
 if __name__ == '__main__':
     # evidence_from_top()
-    relevant_docs_statistic()
+    # relevant_docs_statistic()
+    statistic1()

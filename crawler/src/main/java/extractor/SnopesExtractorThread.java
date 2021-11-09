@@ -1,10 +1,10 @@
 package extractor;
 
+import java.util.HashSet;
+
 import constants.Constants;
 import utils.MyCsvFileWriter;
 import utils.MyFileWriter;
-
-import java.util.HashSet;
 
 /**
  *Extract information with snopes URLs that are not found on the Common Crawl.
@@ -26,7 +26,9 @@ public class SnopesExtractorThread{
 
     public void process(){
         MyFileWriter fileWriter = new MyFileWriter(running_dir);
-        ClaimEvidenceExtractor claimEvidenceExtractor = new ClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
+        //TODO  ClaimEvidenceExtractor claimEvidenceExtractor = new  ClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
+        
+        ClaimEvidenceExtractor claimEvidenceExtractor = new PolitifactClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
         String claim = claimEvidenceExtractor.getClaim();
         String offset = Long.toString(claimEvidenceExtractor.getOffset());
         String length = Integer.toString(claimEvidenceExtractor.getLength());
@@ -36,6 +38,8 @@ public class SnopesExtractorThread{
             String truthfulness = claimEvidenceExtractor.getTruthfulness();
             if (!(truthfulness.length() < 1)) {
                 HashSet<String> evidenceSet = claimEvidenceExtractor.getEvidenceSet();
+
+
                 String headline = claimEvidenceExtractor.getHeadline();
                 String category = claimEvidenceExtractor.getCategory();
                 String subCategory = claimEvidenceExtractor.getSubCategory();
@@ -61,7 +65,8 @@ public class SnopesExtractorThread{
                     }
 
                     
-                } else {
+                } 
+                else { 
                     String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
                         description, source, claim, truthfulness, "", origin};
                     updateCsvFile(infos,Constants.CLAIM_EVIDENCE_CORPUS);

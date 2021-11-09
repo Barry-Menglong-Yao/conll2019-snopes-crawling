@@ -23,18 +23,17 @@ def fetch_img(args):
     out_dir=args.out_dir
     is_direct_dir=True
     resume_claim_id=0 
-
     df_evidence = pd.read_csv(url_to_crawl ,encoding="utf8" )
-    domain_dict={}
+ 
     init()
     cur_snope_url=""
     snope_id=-1
     run_dir=gen_run_dir(out_dir,is_direct_dir )
-    for evidence_id,row in df_evidence.iterrows():
+    for relevant_document_id,row in df_evidence.iterrows():
         snope_url=row["Snopes URL"]
         origin_doc_url=row["Original Link URL"]
         snope_id=row["claim_id"]
-        relevant_document_id=row["evidence_id"]
+        relevant_document_id=row["relevant_document_id"]
         if snope_id>=resume_claim_id:  
             if snope_url!=cur_snope_url:
                 cur_snope_url=snope_url
@@ -103,8 +102,8 @@ def parser_args():
 
     parser = argparse.ArgumentParser()
  
-    parser.add_argument('--data_path',type=str,help=" ",default="../final_corpus/mode3_latest")
-    parser.add_argument('--out_dir',type=str,help=" ",default="../final_corpus/mode3_latest_v2")
+    parser.add_argument('--data_path',type=str,help=" ",default="../final_corpus/mode3_latest_v3")
+    parser.add_argument('--out_dir',type=str,help=" ",default="../final_corpus/mode3_latest_v3")
     args = parser.parse_args()
 
     return args
