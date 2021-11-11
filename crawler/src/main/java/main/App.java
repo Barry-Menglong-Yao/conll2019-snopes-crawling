@@ -58,7 +58,7 @@ public class App{
         String mode=args[0];
         String running_dir=Args.running_dir;
         String source_enum_str=Args.source_str;//Politifact
-        int max_pages_to_fetch=1000;
+        int max_pages_to_fetch=Args.max_pages_to_fetch;
         if( args.length>1){
              running_dir=args[1];
             

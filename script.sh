@@ -42,8 +42,9 @@ then
 	
 	##generate Corpus2 and Corpus3.
 	mvn clean install
-    mvn exec:java -Dexec.mainClass=main.App -Dexec.args="mode3"
-	 
+	mvn exec:java -Dexec.mainClass=main.App -Dexec.args="mode3"
+	
+	cd ..
 else
 	echo "Invalid argument"
 fi
