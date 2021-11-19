@@ -102,8 +102,8 @@ def parser_args():
 
     parser = argparse.ArgumentParser()
  
-    parser.add_argument('--data_path',type=str,help=" ",default="../final_corpus/mode3_latest_v3")
-    parser.add_argument('--out_dir',type=str,help=" ",default="../final_corpus/mode3_latest_v3")
+    parser.add_argument('--data_path',type=str,help=" ",default="../final_corpus/mode3_latest_v4")
+    parser.add_argument('--out_dir',type=str,help=" ",default="../final_corpus/mode3_latest_v4")
     args = parser.parse_args()
 
     return args

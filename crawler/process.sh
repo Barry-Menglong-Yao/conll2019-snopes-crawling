@@ -1,5 +1,5 @@
-cp /home/menglong/workspace/code/referred/conll2019-snopes-crawling/crawler/crawler/Results/run005_snopes_10k/Results/Corpus2.csv ../final_corpus/mode3_latest_v3/
-cp /home/menglong/workspace/code/referred/conll2019-snopes-crawling/crawler/crawler/Results/run005_snopes_10k/Results/Corpus3.csv ../final_corpus/mode3_latest_v3/
-cp /home/menglong/workspace/code/referred/conll2019-snopes-crawling/crawler/crawler/Results/run005_snopes_10k/Results/LinkCorpus.csv ../final_corpus/mode3_latest_v3/
+cp /home/menglong/workspace/code/referred/conll2019-snopes-crawling/crawler/Results/run006_snopes/Results/Corpus2.csv ../final_corpus/mode3_latest_v4/
+cp /home/menglong/workspace/code/referred/conll2019-snopes-crawling/crawler/Results/run006_snopes/Results/Corpus3.csv ../final_corpus/mode3_latest_v4/
+cp /home/menglong/workspace/code/referred/conll2019-snopes-crawling/crawler/Results/run006_snopes/Results/LinkCorpus.csv ../final_corpus/mode3_latest_v4/
 
-#add title in csv
+#add title in Link and Corpus2 csv 

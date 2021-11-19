@@ -127,6 +127,37 @@ def statistic1():
     print(num_dict)
 
 
+label_map={"support":['Mostly True','Correct Attribution','MOSTLY TRUE', 'TRUE', 'Was true.', 'Was true, but the program has since ended.',  'Was true; now outdated', 'True, but the boycott has ended.',  'TRUE:',  'Status: True.', 'PARTLY TRUE',  'TRUE BUT OUTDATED', 'PROBABLY TRUE', 'Partly true.',  'PArtly true.', 'True', 'True.', 'True.', 'CORRECT ATTRIBUTION', 'CORRECTLY ATTRIBUTED' ],
+               "refuse":['Labeled Satire','Miscaptioned','Mostly False','FALSE', 'False', 'FALSE:', 'False.', 'MOSTLY FALSE', 'MOSTLY FALSE:', 'Status: False.',  'INCORRECT ATTRIBUTION',  'INCORRECTLY ATTRIBUTED'],
+               "NEI":['Unproven', 'UNDETERMINED', 'UNPROVEN', 'Undetermined.', 'Mixture', 'Mixture.', 'Multiple - see below.', 'Multiple - see below:', 'Multiple:', 'MISATTRIBUTED', 'MISCAPTIONED', 'MIXED ATTRIBUTION', 'MIXTURE', 'MIXTURE OF ACCURATE AND INACCURATE INFORMATION', 'MIXTURE OF CORRECT AND INCORRECT ATTRIBUTIONS', 'MIXTURE OF REAL AND FAKE IMAGES', 'MIXTURE OF TRUE AND FALSE INFORMATION', 'MIXTURE OF TRUE AND FALSE INFORMATION:', 'MIXTURE OF TRUE AND OUTDATED INFORMATION', 'MIXTURE OF TRUE, FALSE, AND OUTDATED INFORMATION:']}
+
+
+def check_removed_label(data_path):
+    evidence_corpus="Corpus2.csv"
+    df_evidence = pd.read_csv(os.path.join(data_path,evidence_corpus) ,encoding="utf8")
+    cur_claim_id=-2
+    label_num={}
+    for _,row in df_evidence.iterrows():
+        claim_id=row["claim_id"]
+        truthfulness=row["Truthfulness"]
+        if claim_id !=cur_claim_id:
+            is_found=False
+            for label in ["support","refuse","NEI"]:
+                if truthfulness in label_map[label]:
+                    is_found=True
+                    break
+            if not is_found:
+                if truthfulness in label_num.keys():
+                    label_num[truthfulness]+=1
+                else:
+                    label_num[truthfulness]=1
+            cur_claim_id=claim_id
+    print(label_num)
+    
+    sum=0
+    for num in label_num.values():
+        sum+=num
+    print(sum)
 
 def statistic2():
     data_path="crawler/crawler/Results/run005_snopes_10k/Results"

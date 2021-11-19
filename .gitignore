@@ -12,7 +12,8 @@ final_corpus/mode1_old_temp
 final_corpus/mode3_latest_temp
 final_corpus/mode1_old/images
 final_corpus/mode3_latest/images
-final_corpus/
+final_corpus/mode*
+final_corpus/example
 *.tar.gz
 
 
