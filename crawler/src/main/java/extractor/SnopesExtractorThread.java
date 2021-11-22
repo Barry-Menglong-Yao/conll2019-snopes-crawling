@@ -15,20 +15,26 @@ public class SnopesExtractorThread{
     private String html;
     private MyCsvFileWriter myCsvFileWriter;
     private String running_dir;
+    private String source_name;
 
-    public SnopesExtractorThread(String snopesUrl,String html, String running_dir){
+    public SnopesExtractorThread(String snopesUrl,String html, String running_dir,String source_name){
 
         this.snopesUrl = snopesUrl;
         this.html = html;
         myCsvFileWriter = new MyCsvFileWriter();
         this.running_dir=running_dir;
+        this.source_name=source_name;
     }
 
     public void process(){
         MyFileWriter fileWriter = new MyFileWriter(running_dir);
-        //TODO  ClaimEvidenceExtractor claimEvidenceExtractor = new  ClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
-        
-        ClaimEvidenceExtractor claimEvidenceExtractor = new PolitifactClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
+        ClaimEvidenceExtractor claimEvidenceExtractor =null;
+        if(source_name=="Snopes"){
+            claimEvidenceExtractor = new  ClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
+        }else{
+            claimEvidenceExtractor = new PolitifactClaimEvidenceExtractor(html,snopesUrl," ",0L,0,running_dir);
+        }
+ 
         String claim = claimEvidenceExtractor.getClaim();
         String offset = Long.toString(claimEvidenceExtractor.getOffset());
         String length = Integer.toString(claimEvidenceExtractor.getLength());
@@ -46,6 +52,7 @@ public class SnopesExtractorThread{
                 String description = claimEvidenceExtractor.getDescription();
                 String source = claimEvidenceExtractor.getSource();
                 String origin = claimEvidenceExtractor.getOrigin();
+                String rulingOutline=claimEvidenceExtractor.getRulingOutlineExtactor();
                 if (origin.length() < 200) {
                     fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
                     fileWriter.writeLine(url+" has no origin or bad origin");
@@ -66,15 +73,15 @@ public class SnopesExtractorThread{
 
                     
                 } 
-                else { 
-                    String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
-                        description, source, claim, truthfulness, "", origin};
-                    updateCsvFile(infos,Constants.CLAIM_EVIDENCE_CORPUS);
-                    fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
-                    fileWriter.writeLine(url+" has no evidence, write empty evidence");
-                    fileWriter.closeWriteConnection();
-                    System.out.println(url + " has no evidence! , write empty evidence");
-                }
+                // else { 
+                //     String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
+                //         description, source, claim, truthfulness, "", origin};
+                //     updateCsvFile(infos,Constants.CLAIM_EVIDENCE_CORPUS);
+                //     fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
+                //     fileWriter.writeLine(url+" has no evidence, write empty evidence");
+                //     fileWriter.closeWriteConnection();
+                //     System.out.println(url + " has no evidence! , write empty evidence");
+                // }
                 HashSet<String> originalDocumentLinkSet = claimEvidenceExtractor.getOriginalDocumentLinkSet();
                 if (originalDocumentLinkSet.size() > 0) {
                     for (String link : originalDocumentLinkSet) {

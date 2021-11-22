@@ -267,7 +267,7 @@ public class App{
             try{
                 AccessURL accessURL = new AccessURL(url);
                 String html = accessURL.getUrlContent();
-                SnopesExtractorThread snopesExtractorThread = new SnopesExtractorThread(url,html,running_dir);
+                SnopesExtractorThread snopesExtractorThread = new SnopesExtractorThread(url,html,running_dir,this.source.name);
                 snopesExtractorThread.process();
             }catch (Exception e){
                 myFileWriter.openWriteConnection(Constants.CORRUPTED_URLS_SNOPES);

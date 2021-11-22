@@ -19,25 +19,26 @@ import utils.Utils;
  */
 
 public class ClaimEvidenceExtractor {
-    private String url;
-    private String htmlContent;
-    private String claim="";
-    private String category;
-    private String subCategory;
-    private String headline;
-    private String description;
-    private String truthfulness="";
-    private HashSet<String> originalDocumentLinkSet = new HashSet<String>();
-    private String source;
-    private HashSet<String> evidenceSet = new HashSet<String>();
-    private String origin;
-    private Utils dkProUtils;
-    private String pageType="New";
-    private String serverURL;
-    private long offset;
-    private int length;
-    private MyFileWriter fileWriter;
-    private Document doc;
+    protected String url;
+    protected String htmlContent;
+    protected String claim="";
+    protected String category;
+    protected String subCategory;
+    protected String headline;
+    protected String description;
+    protected String truthfulness="";
+    protected HashSet<String> originalDocumentLinkSet = new HashSet<String>();
+    protected String source;
+    protected HashSet<String> evidenceSet = new HashSet<String>();
+    protected String origin;
+    protected String rulingOutline;
+    protected Utils dkProUtils;
+    protected String pageType="New";
+    protected String serverURL;
+    protected long offset;
+    protected int length;
+    protected MyFileWriter fileWriter;
+    protected Document doc;
 
 
     public ClaimEvidenceExtractor(String htmlContent,String url,String serverURL,long offset,int length,String running_dir){
@@ -68,7 +69,7 @@ public class ClaimEvidenceExtractor {
     }
 
 
-    private String categoryExtractor(Document doc){
+    protected String categoryExtractor(Document doc){
         Elements mainArticle =  doc.select("article");
         Elements category ;
         String newsCategory = "";
@@ -87,7 +88,7 @@ public class ClaimEvidenceExtractor {
         return newsCategory;
     }
 
-    private String subCategoryExtractor(Document doc){
+    protected String subCategoryExtractor(Document doc){
         Elements mainArticle =  doc.select("article");
         Elements category ;
         try{
@@ -103,7 +104,7 @@ public class ClaimEvidenceExtractor {
         return newsSubCategory;
     }
 
-    private String headlineExtractor(Document doc){
+    protected String headlineExtractor(Document doc){
          
         Elements mainArticle = doc.select("article");
         Elements header = mainArticle.first().select("header");
@@ -123,7 +124,7 @@ public class ClaimEvidenceExtractor {
         
     }
 
-    private String descriptionExtractor(Document doc){
+    protected String descriptionExtractor(Document doc){
         Elements mainArticle = doc.select("article");
         Elements header = mainArticle.first().select("header");
         String description  = (header.first().getElementsByAttributeValue("itemprop","description")).text();
@@ -144,7 +145,7 @@ public class ClaimEvidenceExtractor {
         }
         return claimElement ;
     }
-    private String claimExtractor(Document doc){
+    protected String claimExtractor(Document doc){
         Elements articleBody = getArticleBody( doc);
         Elements claimPara = extractClaimFromSpecialLocation(doc);
 //        System.out.println(articleBody);
@@ -228,7 +229,7 @@ public class ClaimEvidenceExtractor {
         }
         
     }
-    private String truthfulnessExtractor(Document doc){
+    protected String truthfulnessExtractor(Document doc){
 
         Elements articleBody = getArticleBody( doc);
         Elements truthfulnesPara = extractTruthfulnessParaFromSpecifiedLocation(doc);
@@ -325,7 +326,7 @@ public class ClaimEvidenceExtractor {
 
     }
 
-    private HashSet<String> evidencesExtractor(Document doc){
+    protected HashSet<String> evidencesExtractor(Document doc){
         HashSet<String> evidences = new HashSet<String>();
         Elements articleBody = getArticleBody( doc);
         Elements temArticleBody = articleBody;
@@ -393,7 +394,7 @@ public class ClaimEvidenceExtractor {
         return evidences;
     }
 
-    private String sourceExtractor(Document doc){
+    protected String sourceExtractor(Document doc){
         Elements articleBody = getArticleBody( doc);
         Elements articleSourceBox = articleBody.first().getElementsByClass("article-sources-box");
         String sSources = "";
@@ -419,14 +420,19 @@ public class ClaimEvidenceExtractor {
         return sSources;
     }
 
-    private Elements getArticleBody(Document doc){
+    protected Elements getArticleBody(Document doc){
         Elements articleBody =doc.select("div.article-text");
         if (articleBody.text().length()<1){
             articleBody=doc.select("main > article");
         }
         return articleBody;
     }
-    private String originExtactor(Document doc){
+
+    protected String rulingOutlineExtactor(Document doc){
+        return "";
+    }
+    
+    protected String originExtactor(Document doc){
         String sOrigin = "";
         Elements articleBody = getArticleBody( doc);
         Element articleText = null;
@@ -525,7 +531,7 @@ public class ClaimEvidenceExtractor {
 
 
 
-    private HashSet<String> originalLinksExtractor(Document doc){
+    protected HashSet<String> originalLinksExtractor(Document doc){
         HashSet<String> evidenceLinks = new HashSet<String>();
         Elements articleBody = getArticleBody( doc);
         Elements paraList = articleBody.select("> p");
@@ -702,6 +708,11 @@ public class ClaimEvidenceExtractor {
     public HashSet<String> getEvidenceSet() {
         evidenceSet = evidencesExtractor(doc);
         return evidenceSet;
+    }
+
+    public String getRulingOutlineExtactor(){
+        rulingOutline=rulingOutlineExtactor(doc);
+        return rulingOutline;
     }
 
     public String getOrigin() {

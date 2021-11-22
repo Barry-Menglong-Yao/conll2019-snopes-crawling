@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import constants.Args;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 
@@ -22,8 +21,8 @@ public class test {
 
     public static void test2() throws Exception{
         
-        String running_dir=Args.running_dir;
-        App app = new App(running_dir,Args.source_str,40);
+        String running_dir="Results/run004_politifact_evidence/";
+        App app = new App(running_dir,"Politifact",1);
          
         String mode="mode3";
         app.start(mode );

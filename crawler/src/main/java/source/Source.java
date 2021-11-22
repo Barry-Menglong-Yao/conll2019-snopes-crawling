@@ -5,6 +5,7 @@ import enums.SourceEnum;
 public class Source {
     public String seed_url;
     public String next_page_pattern;
+    public String name;
     public String extract_source_url(Elements elements_in_dict_page, int i){
         return null;
     }

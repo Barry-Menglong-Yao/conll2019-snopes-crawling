@@ -4,7 +4,7 @@ public class Politifact extends Source{
     public Politifact(  ) {
         this.seed_url= "https://www.politifact.com/factchecks/";
         this.next_page_pattern= ".*factchecks/.page.*";
-        
+        this.name="Politifact";
     }
 
     public String extract_source_url(Elements elements_in_dict_page, int i){
