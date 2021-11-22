@@ -66,7 +66,7 @@ public class SnopesExtractorThread{
                     for (String e : evidenceSet) {
                         if (e.length() != 0) {
                             String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
-                                    description, source, claim, truthfulness, e, origin};
+                                    description, source, claim, truthfulness, e, origin,rulingOutline};
                             updateCsvFile(infos,Constants.CLAIM_EVIDENCE_CORPUS);
                         }
                     }
