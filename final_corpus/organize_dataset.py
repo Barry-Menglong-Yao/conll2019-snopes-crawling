@@ -1,5 +1,8 @@
 import os
 import pandas as pd
+
+from utils.statistic_helper import gen_cleaned_truthfulness
+
 def generate_id(data_path):
     out_path= data_path+"_temp"
     out_corpus=os.path.join(out_path,"LinkCorpus.csv")
@@ -51,6 +54,10 @@ def generate_id_for_corpus2(data_path):
     df.insert(0, "claim_id",claim_id_list )
     df.to_csv(corpus,index=False)
     print(removed_num)
+
+
+
+    
     
 # def generate_id_for_corpus3():
     
@@ -78,6 +85,9 @@ def generate_id_for_corpus2(data_path):
 #     df.insert(0, "claim_id",claim_id_list )
 #     df.to_csv(out_corpus,index=False)
 
+
+
+
 def generate_id_for_corpus3(data_path):
     out_path= data_path+"_temp"
     out_corpus=os.path.join(out_path,"Corpus3.csv")
@@ -103,13 +113,27 @@ def generate_id_for_corpus3(data_path):
     df.insert(0, "claim_id",claim_id_list )
     df.to_csv(corpus,index=False)
 
-
+def generate_cleaned_truthfulness(data_path): 
+    corpus=os.path.join(data_path,"Corpus2.csv")
+    out_path= data_path+"_temp"
+    out_corpus=os.path.join(out_path,"Corpus2.csv")
+   
+    cleaned_truthfulness_list=[]
+    df = pd.read_csv(corpus ,encoding="utf8")  
+    for i,row in df.iterrows():
+        truthfulness=row["Truthfulness"]
+        cleaned_truthfulness=gen_cleaned_truthfulness(truthfulness)
+        cleaned_truthfulness_list.append(cleaned_truthfulness)
+    df.insert(11, "cleaned_truthfulness",cleaned_truthfulness_list )
+    df.to_csv(corpus,index=False)
+    
 
 
 if __name__ == '__main__':
    
-    data_path ="../final_corpus/mode3_latest_v4"
+    data_path ="mode3_latest_v4"
     # generate_id(data_path)
-    generate_id_for_corpus2(data_path)
-    generate_id_for_corpus3(data_path)
+    # generate_id_for_corpus2(data_path)
+    # generate_id_for_corpus3(data_path)
+    generate_cleaned_truthfulness(data_path)
      

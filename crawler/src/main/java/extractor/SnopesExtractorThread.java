@@ -59,6 +59,12 @@ public class SnopesExtractorThread{
                     fileWriter.closeWriteConnection();
                     System.out.println(url + " has no origin");
                 }
+                if (rulingOutline.length() < 200) {
+                    fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
+                    fileWriter.writeLine(url+" has no rulingOutline or bad rulingOutline");
+                    fileWriter.closeWriteConnection();
+                    System.out.println(url + " has no rulingOutline");
+                }
                 if (evidenceSet.size() != 0) {
                     fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
                     fileWriter.writeLine(url + " works for extraction!");
@@ -73,15 +79,15 @@ public class SnopesExtractorThread{
 
                     
                 } 
-                // else { 
-                //     String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
-                //         description, source, claim, truthfulness, "", origin};
-                //     updateCsvFile(infos,Constants.CLAIM_EVIDENCE_CORPUS);
-                //     fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
-                //     fileWriter.writeLine(url+" has no evidence, write empty evidence");
-                //     fileWriter.closeWriteConnection();
-                //     System.out.println(url + " has no evidence! , write empty evidence");
-                // }
+                else if (origin.length() >0|| rulingOutline.length() >0){ 
+                    String[] infos = {url, serverURL, offset, length, category, subCategory, headline,
+                        description, source, claim, truthfulness, "", origin,rulingOutline};
+                    updateCsvFile(infos,Constants.CLAIM_EVIDENCE_CORPUS);
+                    fileWriter.openWriteConnection(Constants.EXTRACTOR_LOGS);
+                    fileWriter.writeLine(url+" has no evidence, write empty evidence");
+                    fileWriter.closeWriteConnection();
+                    System.out.println(url + " has no evidence! , write empty evidence");
+                }
                 HashSet<String> originalDocumentLinkSet = claimEvidenceExtractor.getOriginalDocumentLinkSet();
                 if (originalDocumentLinkSet.size() > 0) {
                     for (String link : originalDocumentLinkSet) {

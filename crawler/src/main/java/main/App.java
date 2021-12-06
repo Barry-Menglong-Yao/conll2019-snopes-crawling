@@ -97,14 +97,19 @@ public class App{
         }
 
         if (mode.equals("mode1") || mode.equals("mode3")){
-            localLinksCheckInArchive(  running_dir);
-            localLinksExtractorInWeb(running_dir);
-            snopesLinksHandler(running_dir);
+            gen_relevant_document(running_dir);
         }
 
         long endTime = System.nanoTime();
         long totalTime = endTime-startTime;
         System.out.println("total time cost"+(totalTime));
+    }
+
+    public void gen_relevant_document(String running_dir)throws Exception{
+        // localLinksCheckInArchive(  running_dir);
+        localLinksExtractorInWeb(running_dir);
+        snopesLinksHandler(running_dir);
+
     }
 
     /**
@@ -308,7 +313,10 @@ public class App{
         MyFileWriter myFileWriter = new MyFileWriter(running_dir);
 
         while ((nextLine = reader.readNext()) != null) {
-            if (nextLine[1].length() == 0 || nextLine[0].length()==0) {
+            if (  nextLine.length<2){
+                continue;
+            }
+            if ( nextLine[1].length() == 0 || nextLine[0].length()==0){
                 continue;
             }
             lines.add(nextLine);

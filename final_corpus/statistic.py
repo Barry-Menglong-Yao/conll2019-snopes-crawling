@@ -5,6 +5,10 @@ from urllib.parse import urlparse
 import sys
 from utils.statistic_helper import *
 
+
+
+
+
 def label_statistic(data_path):
     evidence_corpus="Corpus2.csv"
     df_evidence = pd.read_csv(os.path.join(data_path,evidence_corpus) ,encoding="utf8")
@@ -14,10 +18,8 @@ def label_statistic(data_path):
         claim_id=row["claim_id"]
         truthfulness=row["Truthfulness"]
         if claim_id !=cur_claim_id:
-            for label in ["support","refuse","NEI"]:
-                if truthfulness in label_map[label]:
-                    label_num[label]+=1
-                    break
+            cleaned_truthfulness=gen_cleaned_truthfulness(truthfulness)
+            label_num[cleaned_truthfulness]+=1
             cur_claim_id=claim_id
     print(label_num)
     

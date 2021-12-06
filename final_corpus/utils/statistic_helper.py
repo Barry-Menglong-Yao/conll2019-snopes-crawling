@@ -127,10 +127,14 @@ def statistic1():
     print(num_dict)
 
 
-label_map={"support":['Mostly True','Correct Attribution','MOSTLY TRUE', 'TRUE', 'Was true.', 'Was true, but the program has since ended.',  'Was true; now outdated', 'True, but the boycott has ended.',  'TRUE:',  'Status: True.', 'PARTLY TRUE',  'TRUE BUT OUTDATED', 'PROBABLY TRUE', 'Partly true.',  'PArtly true.', 'True', 'True.', 'True.', 'CORRECT ATTRIBUTION', 'CORRECTLY ATTRIBUTED' ],
-               "refuse":['Labeled Satire','Miscaptioned','Mostly False','FALSE', 'False', 'FALSE:', 'False.', 'MOSTLY FALSE', 'MOSTLY FALSE:', 'Status: False.',  'INCORRECT ATTRIBUTION',  'INCORRECTLY ATTRIBUTED'],
+label_map={"supported":['Mostly True','Correct Attribution','MOSTLY TRUE', 'TRUE', 'Was true.', 'Was true, but the program has since ended.',  'Was true; now outdated', 'True, but the boycott has ended.',  'TRUE:',  'Status: True.', 'PARTLY TRUE',  'TRUE BUT OUTDATED', 'PROBABLY TRUE', 'Partly true.',  'PArtly true.', 'True', 'True.', 'True.', 'CORRECT ATTRIBUTION', 'CORRECTLY ATTRIBUTED' ],
+               "refuted":['Labeled Satire','Miscaptioned','Mostly False','FALSE', 'False', 'FALSE:', 'False.', 'MOSTLY FALSE', 'MOSTLY FALSE:', 'Status: False.',  'INCORRECT ATTRIBUTION',  'INCORRECTLY ATTRIBUTED'],
                "NEI":['Unproven', 'UNDETERMINED', 'UNPROVEN', 'Undetermined.', 'Mixture', 'Mixture.', 'Multiple - see below.', 'Multiple - see below:', 'Multiple:', 'MISATTRIBUTED', 'MISCAPTIONED', 'MIXED ATTRIBUTION', 'MIXTURE', 'MIXTURE OF ACCURATE AND INACCURATE INFORMATION', 'MIXTURE OF CORRECT AND INCORRECT ATTRIBUTIONS', 'MIXTURE OF REAL AND FAKE IMAGES', 'MIXTURE OF TRUE AND FALSE INFORMATION', 'MIXTURE OF TRUE AND FALSE INFORMATION:', 'MIXTURE OF TRUE AND OUTDATED INFORMATION', 'MIXTURE OF TRUE, FALSE, AND OUTDATED INFORMATION:']}
-
+def gen_cleaned_truthfulness(truthfulness):
+    for label in ["supported","refuted","NEI"]:
+        if truthfulness in label_map[label]:
+            return label
+    return "other"
 
 def check_removed_label(data_path):
     evidence_corpus="Corpus2.csv"
