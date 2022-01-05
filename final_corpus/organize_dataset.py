@@ -129,11 +129,15 @@ def generate_cleaned_truthfulness(data_path):
     
 
 
+def preprocess(data_path):
+    generate_id(data_path)
+    generate_id_for_corpus2(data_path) 
+    generate_id_for_corpus3(data_path) 
+    generate_cleaned_truthfulness(data_path) 
+
 if __name__ == '__main__':
    
-    data_path ="mode3_latest_v4"
-    # generate_id(data_path)
-    # generate_id_for_corpus2(data_path)
-    # generate_id_for_corpus3(data_path)
-    generate_cleaned_truthfulness(data_path)
+    data_path ="politifact_v1"
+ 
+    preprocess(data_path)
      

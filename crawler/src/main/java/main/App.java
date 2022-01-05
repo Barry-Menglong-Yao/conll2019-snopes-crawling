@@ -106,7 +106,7 @@ public class App{
     }
 
     public void gen_relevant_document(String running_dir)throws Exception{
-        // localLinksCheckInArchive(  running_dir);
+        localLinksCheckInArchive(  running_dir);
         localLinksExtractorInWeb(running_dir);
         snopesLinksHandler(running_dir);
 
