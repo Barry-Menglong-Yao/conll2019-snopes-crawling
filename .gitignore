@@ -16,9 +16,11 @@ final_corpus/mode*
 final_corpus/example
 final_corpus/politifact*
 *.tar.gz
-
-
+*.png 
+*.img 
+final_corpus/**
 *.pyc
+IRN/images/*
 crawler/.settings/org.eclipse.m2e.core.prefs
 crawler/.classpath
 crawler/.project
@@ -47,3 +49,5 @@ corpus4_construction/snopes_ml/utils/__pycache__/feature_engineering.cpython-36.
 corpus4_construction/snopes_ml/utils/__pycache__/data_helpers.cpython-36.pyc
 final_corpus/mode1_old/Corpus3.csv
 crawler/crawler/Results/ 
+IRN/checkpoints 
+IRN/runs

@@ -41,7 +41,7 @@ def check_by_clip(data_path,backup_img_path):
     img_names=os.listdir(image_corpus)
     error_pic_num=0
  
-    with open("log.txt","a") as f:
+    with open(data_path+"/log.txt","a") as f:
         for filepath in  img_names:
             source_path=os.path.join(image_corpus,filepath)
             print(source_path)
@@ -49,6 +49,7 @@ def check_by_clip(data_path,backup_img_path):
                 model.encode([Image.open(source_path)  ], batch_size=1, convert_to_tensor=True, show_progress_bar=True)
             except Exception as e:
                 print(f"clip error: {source_path} ,{e}",file=f)
+                print(f"clip error: {source_path} ,{e}" )
                 error_pic_num+=1
                 os.rename(source_path,os.path.join(backup_img_path,filepath) )
         s=f"{error_pic_num}"
@@ -153,14 +154,13 @@ def check_img():
 
 @click.command()
 @click.pass_context
-@click.option('--outdir', help='Where to save the results', required=True, metavar='DIR',default="output/runs")
-@click.option('--img_in_dir', help='input', required=True, metavar='DIR',default="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/mode3_latest_v2/images")
-@click.option('--txt_in_dir', help='input', required=True, metavar='DIR',default="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/mode3_latest_v2")
-def test(ctx, outdir,  **config_kwargs):
+@click.option('--data_path', help='input', required=True, metavar='DIR',default="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/politifact_v1")
+@click.option('--backup_img_path', help='input', required=True, metavar='DIR',default="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/politifact_v1_backup/images")
+def test(ctx,   **config_kwargs):
     # data_path="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/mode3_latest_v2"
     # backup_img_path="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/mode3_latest_v2_backup/images"
-    data_path="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/politifact_v1"
-    backup_img_path="/home/menglong/workspace/code/referred/conll2019-snopes-crawling/final_corpus/politifact_v1_backup/images" #mode1_old_v2_backup
+    data_path=config_kwargs["data_path"]
+    backup_img_path=config_kwargs["backup_img_path"] #mode1_old_v2_backup
     # check_by_pil(data_path,backup_img_path) 
     check_by_clip(data_path,backup_img_path) 
    

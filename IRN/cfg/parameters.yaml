@@ -1,0 +1,21 @@
+#training
+lr: 0.001
+cuda_flag: True
+workers: 24
+batch_size: 24
+epochs: 250
+image_size: [384, 512]
+grad_accumulation_step: 8
+
+apex_amp: False
+opt_level: 'O1'
+loss_scale: 'dynamic'
+
+#data augmentation
+max_rotation: 5
+
+#visualization
+viz_image_count: 6
+
+#data
+data_dir: "./images"
