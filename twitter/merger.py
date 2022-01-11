@@ -1,16 +1,16 @@
 import pandas as pd
 import csv
-def add_header(parent_dir):
-    file = pd.read_csv(parent_dir+"/twitter_data_new.csv")   
-    # adding header
-    headerList = ['ID', 'Claim_id', 'Relevant_doc_id', 'snoopes_url', 'link_url' 'Text', 'Media_Type', 'Media URL']
+# def add_header(twitter_dir):
+#     file = pd.read_csv(twitter_dir+"/twitter_data_new.csv")   
+#     # adding header
+#     headerList = ['ID', 'Claim_id', 'Relevant_doc_id', 'snoopes_url', 'link_url' 'Text', 'Media_Type', 'Media URL']
     
-    # converting data frame to csv
-    file.to_csv("twitter_data_new.csv", header=headerList, index=False)
+#     # converting data frame to csv
+#     file.to_csv("twitter_data_new.csv", header=headerList, index=False)
     
 def merge(parent_dir,twitter_dir):
     import pandas as pd
-    data_df = pd.read_csv(twitter_dir+"/twitter_data_new1.csv")
+    data_df = pd.read_csv(twitter_dir+"/twitter_data_new.csv")
     
         
     for _,row in data_df.iterrows():
@@ -35,6 +35,7 @@ def write_csv(parent_dir,data):
 def main():
     parent_dir="final_corpus/politifact_v1"
     twitter_dir=parent_dir+ "/twitter"
+  
     merge(parent_dir,twitter_dir)
     
     

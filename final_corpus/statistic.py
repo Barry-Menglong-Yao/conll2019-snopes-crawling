@@ -93,7 +93,7 @@ def statistic(data_path):
     label_statistic(data_path)
     corpus2_statistic(data_path)
     corpus3_statistic(data_path)
-    # instance_completeness_statistic(data_path)
+    instance_completeness_statistic(data_path)
 
 
 
@@ -101,7 +101,7 @@ def statistic(data_path):
 if __name__ == '__main__':
      
     # data_path="mode3_latest_v4"
-    data_path="politifact_v1"
+    data_path="final_corpus/politifact_v1"
     # data_path="mode3_latest_v4/test"
     statistic(data_path)
     
