@@ -126,7 +126,7 @@ def generate_cleaned_truthfulness(data_path):
         cleaned_truthfulness_list.append(cleaned_truthfulness)
     df.insert(11, "cleaned_truthfulness",cleaned_truthfulness_list )
     df.to_csv(corpus,index=False)
-    
+    #test
 
 
 def preprocess(data_path):
