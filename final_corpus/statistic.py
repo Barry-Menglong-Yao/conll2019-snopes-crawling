@@ -21,13 +21,13 @@ def label_statistic(data_path):
             cleaned_truthfulness=gen_cleaned_truthfulness(truthfulness)
             label_num[cleaned_truthfulness]+=1
             cur_claim_id=claim_id
-    print(label_num)
+    print(f"label_statistic: {label_num}")
     # print(df_evidence["cleaned_truthfulness"].value_counts())
     
     sum=0
     for num in label_num.values():
         sum+=num
-    print(f"remaining instance:{sum-label_num['other']}")
+    # print(f"remaining instance:{sum-label_num['other']}")
 
 
 def corpus2_statistic(data_path):
@@ -60,12 +60,12 @@ def instance_completeness_statistic(data_path):
     cur_snope_url=-2
     claim_dict={}
     count=0
-    print(df_evidence.isnull().sum())
+    print(f"instance_completeness: {df_evidence.isnull().sum()}")
     for _,row in df_evidence.iterrows():
         claim_id=row["claim_id"] 
         ruling_outline=row["ruling_outline"] 
         evidence=row["Evidence"] 
-        if not pd.isna(ruling_outline) and not pd.isna(evidence):
+        if not pd.isna(ruling_outline) and not pd.isna(evidence)  :
             count+=1
         else:
             pass
@@ -86,24 +86,51 @@ def corpus3_statistic(data_path):
      
     
     # print(snope_url_dict)
-    print(f"relevant_document: {len(df_evidence)}")     
+    print(f"relevant_document: {len(df_evidence)}")  
+    
+def image_statistic(data_path):
+    image_corpus=os.path.join(data_path ,"images") 
+    img_names=os.listdir(image_corpus)
+    print(f"images: {len(img_names)}")  
 
-
+def count_claim_without_relevant_document(data_path):
+    Corpus2_path="Corpus2.csv"
+    df2 = pd.read_csv(os.path.join(data_path,Corpus2_path) ,encoding="utf8")
+    claim_list=df2["claim_id"].tolist() 
+    claim_set=set(claim_list)
+    
+    Corpus3_path="Corpus3.csv"
+    df3 = pd.read_csv(os.path.join(data_path,Corpus3_path) ,encoding="utf8")
+    claim_with_relevant_document_list=df3["claim_id"].tolist() 
+    claim_with_relevant_document_set=set(claim_with_relevant_document_list)
+    
+    print(f"total:{len(claim_set)},with relevant_document: {len(claim_with_relevant_document_set)}")
+    
+    
+    
+    
 def statistic(data_path):
     label_statistic(data_path)
     corpus2_statistic(data_path)
     corpus3_statistic(data_path)
     instance_completeness_statistic(data_path)
+    count_claim_without_relevant_document(data_path)
 
 
-
+import argparse
+def parser_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_path',type=str,help=" ",default="politifact_v2")
+    args = parser.parse_args()
+    return args
 
 if __name__ == '__main__':
-     
+    args = parser_args()
     # data_path="mode3_latest_v4"
-    data_path="final_corpus/politifact_v1"
+     
     # data_path="mode3_latest_v4/test"
-    statistic(data_path)
+    statistic(args.data_path)
+    # count_claim_without_relevant_document(data_path)
     
     
     # show_dataset_example(data_path)

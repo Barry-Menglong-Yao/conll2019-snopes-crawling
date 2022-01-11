@@ -409,7 +409,7 @@ public class App{
      * handle links in Doc Link Corpus that are the Snopes URLs
      * @throws Exception
      */
-    private void snopesLinksHandler(String running_dir) throws Exception{
+    public void snopesLinksHandler(String running_dir) throws Exception{
         ArrayList<String> lines = readUlrs(running_dir+Constants.RESULT_STORAGE_DIRECTORY+Constants.SNOPES_LINKS);
         List<String[]> snopesPairs = new ArrayList<String[]>();
 
