@@ -22,6 +22,7 @@ def label_statistic(data_path):
             label_num[cleaned_truthfulness]+=1
             cur_claim_id=claim_id
     print(label_num)
+    # print(df_evidence["cleaned_truthfulness"].value_counts())
     
     sum=0
     for num in label_num.values():
@@ -100,8 +101,11 @@ def statistic(data_path):
 if __name__ == '__main__':
      
     # data_path="mode3_latest_v4"
-    # data_path="politifact_v1"
-    data_path="mode3_latest_v4/test"
+    data_path="politifact_v1"
+    # data_path="mode3_latest_v4/test"
     statistic(data_path)
     
+    
+    # show_dataset_example(data_path)
+    # check_removed_label(data_path)
     

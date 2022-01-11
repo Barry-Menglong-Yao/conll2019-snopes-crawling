@@ -129,6 +129,15 @@ def generate_cleaned_truthfulness(data_path):
     #test
 
 
+def fix_cleaned_truthfulness(data_path):
+    corpus=os.path.join(data_path,"Corpus2.csv")
+    df = pd.read_csv(corpus ,encoding="utf8")  
+    df=df.drop(columns=['cleaned_truthfulness' ])
+    df.to_csv(corpus,index=False)
+    
+    generate_cleaned_truthfulness(data_path)
+    
+
 def preprocess(data_path):
     generate_id(data_path)
     generate_id_for_corpus2(data_path) 
@@ -139,5 +148,6 @@ if __name__ == '__main__':
    
     data_path ="politifact_v1"
  
-    preprocess(data_path)
+    # preprocess(data_path)
+    fix_cleaned_truthfulness(data_path)
      
