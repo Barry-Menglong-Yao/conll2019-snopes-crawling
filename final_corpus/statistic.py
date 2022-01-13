@@ -133,11 +133,11 @@ def count_claim_without_relevant_document(data_path):
     
 def split_statistic(data_path):
     print("train")
-    label_statistic(data_path+"/train")
+    statistic(data_path+"/train")
     print("val")
-    label_statistic(data_path+"/val")
+    statistic(data_path+"/val")
     print("test")
-    label_statistic(data_path+"/test")
+    statistic(data_path+"/test")
   
     
 def statistic(data_path):
