@@ -143,8 +143,8 @@ def statistic1():
 
 
 label_map={"supported":['mostly-true','true','Mostly True','Correct Attribution','MOSTLY TRUE', 'TRUE', 'Was true.', 'Was true, but the program has since ended.',  'Was true; now outdated', 'True, but the boycott has ended.',  'TRUE:',  'Status: True.', 'PARTLY TRUE',  'TRUE BUT OUTDATED', 'PROBABLY TRUE', 'Partly true.',  'PArtly true.', 'True', 'True.', 'True.', 'CORRECT ATTRIBUTION', 'CORRECTLY ATTRIBUTED' ],
-               "refuted":['barely-true','pants-fire','false','Labeled Satire','Miscaptioned','Mostly False','FALSE', 'False', 'FALSE:', 'False.', 'MOSTLY FALSE', 'MOSTLY FALSE:', 'Status: False.',  'INCORRECT ATTRIBUTION',  'INCORRECTLY ATTRIBUTED'],
-               "NEI":['half-true','Unproven', 'UNDETERMINED', 'UNPROVEN', 'Undetermined.', 'Mixture', 'Mixture.', 'Multiple - see below.', 'Multiple - see below:', 'Multiple:', 'MISATTRIBUTED', 'MISCAPTIONED', 'MIXED ATTRIBUTION', 'MIXTURE', 'MIXTURE OF ACCURATE AND INACCURATE INFORMATION', 'MIXTURE OF CORRECT AND INCORRECT ATTRIBUTIONS', 'MIXTURE OF REAL AND FAKE IMAGES', 'MIXTURE OF TRUE AND FALSE INFORMATION', 'MIXTURE OF TRUE AND FALSE INFORMATION:', 'MIXTURE OF TRUE AND OUTDATED INFORMATION', 'MIXTURE OF TRUE, FALSE, AND OUTDATED INFORMATION:']}
+               "refuted":['Misattributed','REAL PHOTOGRAPHS; INACCURATE DESCRIPTION','REAL PHOTOGRAPH; INACCURATE DESCRIPTION','Scam','Real photographs; inaccurate description.','barely-true','pants-fire','false','Labeled Satire','Miscaptioned','Mostly False','FALSE', 'False', 'FALSE:', 'False.', 'MOSTLY FALSE', 'MOSTLY FALSE:', 'Status: False.',  'INCORRECT ATTRIBUTION',  'INCORRECTLY ATTRIBUTED'],
+               "NEI":['half-true','Unproven', 'UNDETERMINED', 'UNPROVEN', 'Undetermined.','MIXTURE:', 'Mixture', 'Mixture.', 'Multiple - see below.', 'Multiple - see below:', 'Multiple:', 'MISATTRIBUTED', 'MISCAPTIONED', 'MIXED ATTRIBUTION', 'MIXTURE', 'MIXTURE OF ACCURATE AND INACCURATE INFORMATION', 'MIXTURE OF CORRECT AND INCORRECT ATTRIBUTIONS', 'MIXTURE OF REAL AND FAKE IMAGES', 'MIXTURE OF TRUE AND FALSE INFORMATION', 'MIXTURE OF TRUE AND FALSE INFORMATION:', 'MIXTURE OF TRUE AND OUTDATED INFORMATION', 'MIXTURE OF TRUE, FALSE, AND OUTDATED INFORMATION:']}
 def gen_cleaned_truthfulness(truthfulness):
     for label in ["supported","refuted","NEI"]:
         if truthfulness in label_map[label]:
@@ -172,6 +172,10 @@ def check_removed_label(data_path):
                     label_num[truthfulness]=1
             cur_claim_id=claim_id
     print(label_num)
+    
+    for key,value in label_num.items():
+        if value>10:
+            print(f"{key}:{value}")
     
     sum=0
     for num in label_num.values():

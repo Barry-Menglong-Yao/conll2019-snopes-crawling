@@ -79,7 +79,7 @@ def fetch_img_by_newspaper(url, snope_id,evidence_id,run_dir):
     
 
     filtered_imgs=filter(article.images)
-    prefix=str(snope_id).zfill(5)+"-"+str(evidence_id).zfill(5)
+    prefix=str(snope_id).zfill(6)+"-"+str(evidence_id).zfill(6)
     download = Download(run_dir,prefix,links=filtered_imgs)
     download.start()
 

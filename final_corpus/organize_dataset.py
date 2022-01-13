@@ -1,6 +1,9 @@
 import os
 import pandas as pd
-
+from statistic import get_claim_with_relevant_document_set
+from utils.merge_snopes_politifact import increase_politifact_id, merge, merge_one_file
+from utils.relevant_document_percent import get_claim_id_in_percentage_range
+from utils.splitor import split_corpus2, split_corpus3_and_image
 from utils.statistic_helper import gen_cleaned_truthfulness
 
 def generate_id(data_path):
@@ -137,14 +140,54 @@ def fix_cleaned_truthfulness(data_path):
     
     generate_cleaned_truthfulness(data_path)
     
+def get_ruling_outline(ruling_article):
+    ruling_outline=""
+    if not pd.isna(ruling_article):
+        position=ruling_article.lower().find("In sum".lower())
+        if  position>0:
+            ruling_outline=ruling_article[position:]
+        else:
+            position=ruling_article.find("Conclusion" )
+            if  position>0:
+                ruling_outline=ruling_article[position:]
+            else:
+                position=ruling_article.lower().find("In conclusion".lower())
+                if  position>0:
+                    ruling_outline=ruling_article[position:]
+                else:
+                    position=ruling_article.lower().find("In short".lower())
+                    if  position>0:
+                        ruling_outline=ruling_article[position:]
+                    elif len(ruling_article)<1000:
+                        ruling_outline=ruling_article
+    return ruling_outline
+    
 def generate_ruling_outline_for_snopes(data_path):    
     if "politifact" not in data_path:
         corpus=os.path.join(data_path,"Corpus2.csv")
         df = pd.read_csv(corpus ,encoding="utf8")  
+        df=df.drop(columns=['ruling_outline' ])
+        ruling_outline_list=[]
         for i,row in df.iterrows():
             ruling_article=row["Origin"]
+            # if row["Snopes URL"] in ["https://www.snopes.com/fact-check/ticketmaster-class-action-free-ticket-giveaway/"]:
+            #     print(len(ruling_article))
+            ruling_outline=get_ruling_outline(ruling_article)
+            # if len(ruling_outline)==0:
+            #     print(row["Snopes URL"])
+            ruling_outline_list.append(ruling_outline)
+        df.insert(15, "ruling_outline",ruling_outline_list )
         df.to_csv(corpus,index=False)
-
+        
+def generate_fact_checkor_website(data_path):
+    corpus=os.path.join(data_path,"Corpus2.csv")
+    df = pd.read_csv(corpus ,encoding="utf8")
+    if "politifact" not in data_path:
+        df['fact_checkor_website']="snopes"
+    else:
+        df['fact_checkor_website']="politifact"
+   
+    df.to_csv(corpus,index=False)
 
 def generate(data_path):
     generate_id(data_path)
@@ -162,7 +205,11 @@ def clean_by_label(data_path):
 def clean_row_with_na(data_path):
     corpus=os.path.join(data_path,"Corpus2.csv")
     df = pd.read_csv(corpus ,encoding="utf8")  
-    df=df.dropna(subset=['ruling_outline', 'Origin'])
+    df=df.dropna(subset=['Evidence']) #'ruling_outline', 'Origin'
+    indexes = df[ (df['ruling_outline'].isna()) & (df['Origin'].isna()) ].index
+    #droping mutiple rows based on column value
+    df.drop(indexes,inplace=True)
+
     df=df.reset_index(drop=True)
     df.to_csv(corpus,index=False)
 
@@ -213,24 +260,62 @@ def clean_images(data_path):
     
 
 def clean_row_without_relevant_document(data_path):    
-    pass
+    corpus=os.path.join(data_path,"Corpus2.csv")
+    df = pd.read_csv(corpus ,encoding="utf8")  
+    claim_with_relevant_document_set=get_claim_with_relevant_document_set(data_path)
+    df.drop(df[~df['claim_id'].isin(list(claim_with_relevant_document_set))].index, inplace = True)
+    df=df.reset_index(drop=True)
+    df.to_csv(corpus,index=False)
     
+    
+def clean_row_with_few_relevant_document(data_path):
+    _,_,claim_ids_below_20=get_claim_id_in_percentage_range(data_path)
+    corpus=os.path.join(data_path,"Corpus2.csv")
+    df = pd.read_csv(corpus ,encoding="utf8")  
+    df.drop(df[df['claim_id'].isin(list(claim_ids_below_20))].index, inplace = True)
+    df=df.reset_index(drop=True)
+    df.to_csv(corpus,index=False)
+    
+def clean_corpus3_na(data_path):
+    corpus3=os.path.join(data_path,"Corpus3.csv")
+    df3 = pd.read_csv(corpus3 ,encoding="utf8")  
+    df3=df3.dropna(subset=['Origin Document'])
+    df3=df3.reset_index(drop=True)
+    df3.to_csv(corpus3,index=False)
+
 def clean(data_path):
     clean_by_label(data_path)
     clean_row_with_na(data_path)
+    clean_row_without_relevant_document(data_path)
+    clean_row_with_few_relevant_document(data_path)
     clean_claim_id_equal_minus_1(data_path)
     clean_corpus3(data_path)
     clean_images(data_path)
     
+    
+    
+    
+    
+import argparse
+def parser_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_path',type=str,help=" ",default="mocheg") #politifact_v3,mode3_latest_v5
+    args = parser.parse_args()
+    return args
+
 if __name__ == '__main__':
-   
-    data_path ="politifact_v2"
+    args = parser_args()
+      #"mode3_latest_v5"
     # generate(data_path)
     # clean(data_path)
+    split_corpus3_and_image(args.data_path)
+    # merge("mode3_latest_v5","politifact_v3","mocheg")
+    # merge_one_file("mode3_latest_v5","politifact_v3","mocheg","Corpus2.csv"   )
     
- 
-    clean_corpus3(data_path)
-    clean_images(data_path)
+    # generate_fact_checkor_website(args.data_path)
+    # generate_id( args.data_path)
+    
+    
     
    
      
