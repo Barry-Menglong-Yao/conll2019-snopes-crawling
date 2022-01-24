@@ -20,7 +20,7 @@ Disclaimer:
 
 ### Credit: 
 
-This repository was build by Barry Menglong Yao, Aditya Shah
+This repository was built by Barry Menglong Yao, Aditya Shah. This repository was built on the top of https://github.com/UKPLab/conll2019-snopes-crawling which was created by Hao Zhang, Arphitha Nagaraja, and Andreas Hanselowski.
 
 
 ### License:
